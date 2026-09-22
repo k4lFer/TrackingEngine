@@ -1,0 +1,19 @@
+using App.Objects.Tracking.DTOs.Output.Response;
+using App.Shared.Result;
+using Cortex.Mediator.Queries;
+
+namespace App.UseCases.Tracking.Query.GetEventsByVehicle;
+
+public class GetEventsByVehicleQuery : IQuery<OutputPort<List<TrackingEventResponse>>>
+{
+    public Guid VehicleId { get; }
+    public DateTime From { get; }
+    public DateTime To { get; }
+
+    public GetEventsByVehicleQuery(Guid vehicleId, DateTime from, DateTime to)
+    {
+        VehicleId = vehicleId;
+        From = from;
+        To = to;
+    }
+}

@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+      <PackageReference Include="MailKit" Version="4.16.0" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.0" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="10.0.3" />
+      <PackageReference Include="NetTopologySuite" Version="2.6.0" />
+
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\App.Domain\App.Domain.csproj" />
+      <ProjectReference Include="..\App.Interfaces\App.Interfaces.csproj" />
+      <ProjectReference Include="..\App.Objects\App.Objects.csproj" />
+      <ProjectReference Include="..\App.Shared\App.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Templates\**\*.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Bienvenido!</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+    <div style="background-color: white; padding: 20px; border-radius: 5px; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #333;">¡Hola {{Username}}!</h2>
+        <p>Gracias por registrarte en nuestra plataforma. Para completar tu registro, verifica tu correo usando cualquiera de estas opciones:</p>
+        <p style="margin: 20px 0;">
+            <a href="{{VerificationLink}}" style="background-color: #007bff; color: white; padding: 12px 24px; border-radius: 5px; text-decoration: none;">Verificar mi correo</a>
+        </p>
+        <p>O ingresa este código en la aplicación: <strong style="font-size: 24px; letter-spacing: 4px;">{{Code}}</strong></p>
+        <p style="color: #888; font-size: 12px;">El código expira en 15 minutos y el enlace en 24 horas.</p>
+        <p>Saludos cordiales,<br/>El equipo.</p>
+    </div>
+</body>
+</html>

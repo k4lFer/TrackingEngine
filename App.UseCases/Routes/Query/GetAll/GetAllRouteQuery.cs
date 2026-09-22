@@ -1,0 +1,10 @@
+using App.Objects.Routes.DTOs.Output.Response;
+using App.Shared.Query;
+using App.Shared.Result;
+using Cortex.Mediator.Queries;
+
+namespace App.UseCases.Routes.Query.GetAll;
+
+public class GetAllRouteQuery : IQuery<OutputPort<QueryResult<RouteResponse>>>
+{
+}

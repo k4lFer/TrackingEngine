@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.3">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Scalar.AspNetCore" Version="2.14.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\App.Infrastructure\App.Infrastructure.csproj" />
+      <ProjectReference Include="..\App.Interfaces\App.Interfaces.csproj" />
+      <ProjectReference Include="..\App.UseCases\App.UseCases.csproj" />
+      <ProjectReference Include="..\App.Shared\App.Shared.csproj" />
+    </ItemGroup>
+
+</Project>
