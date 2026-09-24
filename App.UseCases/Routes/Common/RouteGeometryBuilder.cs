@@ -25,6 +25,7 @@ public static class RouteGeometryBuilder
         ValhallaOptions valhallaOptions,
         IRoutePlanner? externalPlanner,
         bool externalPlannerEnabled,
+        int alternatesCount,
         CancellationToken cancellationToken)
     {
         // 1) Red interna: proyección a los caminos + Dijkstra por tiempo.
@@ -63,6 +64,7 @@ public static class RouteGeometryBuilder
             RoutingProfile.Truck,
             new GeoCoordinate(first.Lat, first.Lon),
             new GeoCoordinate(last.Lat, last.Lon),
+            Math.Clamp(alternatesCount, 0, 2),
             cancellationToken);
 
         if (plan is null || plan.Points.Count < 2)

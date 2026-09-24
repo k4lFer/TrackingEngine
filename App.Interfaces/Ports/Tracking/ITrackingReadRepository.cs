@@ -1,4 +1,5 @@
 using App.Objects.Tracking.DTOs.Output.Response;
+using App.Shared.Query;
 
 namespace App.Interfaces.Ports.Tracking;
 
@@ -44,5 +45,11 @@ public interface ITrackingReadRepository
         CancellationToken cancellationToken = default);
 
     Task<List<TripSummaryResponse>> GetAllTripsAsync(
+        CancellationToken cancellationToken = default);
+
+    Task<QueryResult<TripSummaryResponse>> GetTripsPagedAsync(
+        int page,
+        int pageSize,
+        QueryFilter<TripSummaryResponse>? filter = null,
         CancellationToken cancellationToken = default);
 }

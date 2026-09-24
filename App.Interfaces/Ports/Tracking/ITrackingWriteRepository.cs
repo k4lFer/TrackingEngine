@@ -8,6 +8,10 @@ public interface ITrackingWriteRepository
         Guid vehicleId,
         CancellationToken cancellationToken = default);
 
+    Task<TTrip?> GetTripEntityByIdAsync(
+        Guid tripId,
+        CancellationToken cancellationToken = default);
+
     Task<List<TTrip>> GetAllActiveAsync(
         CancellationToken cancellationToken = default);
 

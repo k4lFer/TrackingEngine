@@ -1,7 +1,9 @@
+using System.Text.Json;
 using App.Domain.Routes.Entities;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Interfaces.Ports.Routes;
 using App.Objects.Routes.DTOs.Output.Response;
+using App.Objects.Shared.DTOs;
 using App.Shared.Geometry;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,7 +43,8 @@ public class RouteRepository : IRouteRepository, IRouteGeometryRepository
                 r.DestinationGeofenceId,
                 dg != null ? dg.Name : null,
                 r.RouteGroupId,
-                r.AlternativeRank))
+                r.AlternativeRank,
+                r.WaypointsJson))
             .ToListAsync(cancellationToken);
 
         var groupIds = rows
@@ -68,7 +71,8 @@ public class RouteRepository : IRouteRepository, IRouteGeometryRepository
                     r.DestinationGeofenceId,
                     null,
                     r.RouteGroupId,
-                    r.AlternativeRank))
+                    r.AlternativeRank,
+                    null))
                 .ToListAsync(cancellationToken))
             .GroupBy(x => x.RouteGroupId!.Value)
             .ToDictionary(g => g.Key, g => g.Select(a => MapToAlternative(a, includeGeometry: false)).ToList());
@@ -103,7 +107,8 @@ public class RouteRepository : IRouteRepository, IRouteGeometryRepository
                 r.DestinationGeofenceId,
                 dg != null ? dg.Name : null,
                 r.RouteGroupId,
-                r.AlternativeRank))
+                r.AlternativeRank,
+                r.WaypointsJson))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (row is null)
@@ -129,7 +134,8 @@ public class RouteRepository : IRouteRepository, IRouteGeometryRepository
                     r.DestinationGeofenceId,
                     null,
                     r.RouteGroupId,
-                    r.AlternativeRank))
+                    r.AlternativeRank,
+                    null))
                 .ToListAsync(cancellationToken);
 
             alternatives = altRows.Select(a => MapToAlternative(a, includeGeometry: true)).ToList();
@@ -142,6 +148,13 @@ public class RouteRepository : IRouteRepository, IRouteGeometryRepository
     {
         return await _dbc.Routes
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<TRoute>> GetGroupRawAsync(Guid routeGroupId, CancellationToken cancellationToken = default)
+    {
+        return await _dbc.Routes
+            .Where(r => r.RouteGroupId == routeGroupId)
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<bool> ExistsAsync(string code, CancellationToken cancellationToken = default)
@@ -192,7 +205,21 @@ public class RouteRepository : IRouteRepository, IRouteGeometryRepository
             row.OriginGeofenceName,
             row.DestinationGeofenceId,
             row.DestinationGeofenceName,
-            alternatives);
+            alternatives,
+            Waypoints: ParseWaypoints(row.WaypointsJson));
+    }
+
+    private static IReadOnlyList<CoordinateDto>? ParseWaypoints(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return null;
+        try
+        {
+            return JsonSerializer.Deserialize<List<CoordinateDto>>(json);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 
     private static RouteAlternativeResponse MapToAlternative(RouteRow row, bool includeGeometry)
@@ -230,5 +257,6 @@ public class RouteRepository : IRouteRepository, IRouteGeometryRepository
         Guid? DestinationGeofenceId,
         string? DestinationGeofenceName,
         Guid? RouteGroupId,
-        int AlternativeRank);
+        int AlternativeRank,
+        string? WaypointsJson);
 }

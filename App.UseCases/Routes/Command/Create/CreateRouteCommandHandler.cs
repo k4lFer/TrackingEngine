@@ -67,6 +67,7 @@ public class CreateRouteCommandHandler : ICommandHandler<CreateRouteCommand, Out
         }
 
         var roads = await _routeGeometryRepository.GetAllActiveRoadsAsync(cancellationToken);
+        var alternativesCount = Math.Clamp(dto.AlternativesCount ?? 2, 0, 2);
         var result = await RouteGeometryBuilder.BuildAsync(
             roads,
             dto.Waypoints,
@@ -74,7 +75,19 @@ public class CreateRouteCommandHandler : ICommandHandler<CreateRouteCommand, Out
             _valhallaOptions,
             _routePlanner,
             _valhallaOptions.Enabled,
+            alternativesCount,
             cancellationToken);
+
+        // La zona no está conectada por la red interna de la mina ni por la red
+        // externa: solo quedaría una línea recta, por lo que se rechaza el alta.
+        if (!result.UsedInternalNetwork && !result.ValhallaDurationS.HasValue)
+        {
+            return OutputPort<RouteResponse>.Failure(
+                HttpStatusCode.BadRequest,
+                new MessageDto(
+                    "No se encontró una ruta válida y accesible para los puntos indicados: la zona no está conectada por ninguna vía. Ajusta los puntos o elige otra zona.",
+                    "ROUTE_NOT_ROUTABLE"));
+        }
 
         var code = dto.Code.Trim();
         var name = dto.Name.Trim();
@@ -89,6 +102,7 @@ public class CreateRouteCommandHandler : ICommandHandler<CreateRouteCommand, Out
             dto.OriginGeofenceId,
             dto.DestinationGeofenceId,
             result.SpeedProfile is null ? null : JsonSerializer.Serialize(result.SpeedProfile),
+            JsonSerializer.Serialize(dto.Waypoints),
             groupId,
             0);
 
@@ -104,6 +118,7 @@ public class CreateRouteCommandHandler : ICommandHandler<CreateRouteCommand, Out
                 dto.MaxSpeedKmh,
                 dto.OriginGeofenceId,
                 dto.DestinationGeofenceId,
+                null,
                 null,
                 groupId,
                 i + 1);

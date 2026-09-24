@@ -1,17 +1,16 @@
 using App.Domain.Materials.Entities;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Interfaces.Ports.Materials;
+using App.Objects.Materials.DTOs.Output.Response;
+using App.Shared.Query;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Infrastructure.Adapters.Materials;
 
-public class MaterialRepository : IMaterialRepository, IMaterialQueryRepository
+public class MaterialRepository : BaseRepository<TMaterial>, IMaterialRepository, IMaterialQueryRepository
 {
-    private readonly AppDataBaseContext _dbc;
-
-    public MaterialRepository(AppDataBaseContext dbc)
+    public MaterialRepository(AppDataBaseContext dbc) : base(dbc)
     {
-        _dbc = dbc;
     }
 
     public async Task<List<TMaterial>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -29,6 +28,27 @@ public class MaterialRepository : IMaterialRepository, IMaterialQueryRepository
             .Where(m => m.Active)
             .OrderBy(m => m.Code)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<QueryResult<MaterialResponse>> GetMaterialsPagedAsync(
+        int page,
+        int pageSize,
+        QueryFilter<MaterialResponse>? filter = null,
+        CancellationToken cancellationToken = default)
+    {
+        var all = await _dbc.Materials
+            .AsNoTracking()
+            .OrderBy(m => m.Code)
+            .Select(m => new MaterialResponse(m.Id, m.Code, m.Name, m.Unit, m.Active))
+            .ToListAsync(cancellationToken);
+
+        IQueryable<MaterialResponse> query = all.AsQueryable();
+        if (filter is not null)
+        {
+            query = filter.ApplyFilter(query);
+        }
+
+        return PaginateInMemory(query.ToList(), page, pageSize);
     }
 
     public async Task<TMaterial?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

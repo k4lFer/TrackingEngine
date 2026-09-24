@@ -25,6 +25,23 @@ public class VehicleRepository : BaseRepository<TVehicle>, IVehicleRepository
             .FirstOrDefaultAsync(v => v.Code == code, cancellationToken);
     }
 
+    public async Task<TVehicle?> GetByDeviceIdentifierAsync(string identifier, CancellationToken cancellationToken = default)
+    {
+        var vehicleId = await _dbc.Devices
+            .Where(d => d.Identifier == identifier)
+            .Select(d => d.VehicleId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (vehicleId is null)
+        {
+            return null;
+        }
+
+        return await _dbc.Vehicles
+            .Include(v => v.CurrentState)
+            .FirstOrDefaultAsync(v => v.Id == vehicleId, cancellationToken);
+    }
+
     public async Task<IReadOnlyList<VehicleStatusResponse>> GetAllWithStatusAsync(CancellationToken cancellationToken = default)
     {
         return await _dbc.Vehicles
@@ -33,6 +50,12 @@ public class VehicleRepository : BaseRepository<TVehicle>, IVehicleRepository
                 v.Id,
                 v.Code,
                 v.Plate,
+                v.Brand,
+                v.Model,
+                v.Active,
+                _dbc.Devices.Where(d => d.VehicleId == v.Id).Select(d => d.Identifier).FirstOrDefault(),
+                _dbc.Devices.Where(d => d.VehicleId == v.Id).Select(d => (int?)d.Kind).FirstOrDefault(),
+                _dbc.Devices.Where(d => d.VehicleId == v.Id).Select(d => d.Model).FirstOrDefault(),
                 v.CurrentState != null ? v.CurrentState.State.ToString() : "Offline",
                 v.CurrentState != null && v.CurrentState.LastGeom != null ? v.CurrentState.LastGeom.Y : null,
                 v.CurrentState != null && v.CurrentState.LastGeom != null ? v.CurrentState.LastGeom.X : null,
@@ -52,7 +75,10 @@ public class VehicleRepository : BaseRepository<TVehicle>, IVehicleRepository
                 v.Plate,
                 v.Brand,
                 v.Model,
-                v.Active))
+                v.Active,
+                _dbc.Devices.Where(d => d.VehicleId == v.Id).Select(d => d.Identifier).FirstOrDefault(),
+                _dbc.Devices.Where(d => d.VehicleId == v.Id).Select(d => (int?)d.Kind).FirstOrDefault(),
+                _dbc.Devices.Where(d => d.VehicleId == v.Id).Select(d => d.Model).FirstOrDefault()))
             .ToListAsync(cancellationToken);
     }
 

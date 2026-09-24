@@ -36,6 +36,7 @@ public class PreviewRouteCommandHandler : ICommandHandler<PreviewRouteCommand, O
         }
 
         var roads = await _routeGeometryRepository.GetAllActiveRoadsAsync(cancellationToken);
+        var alternativesCount = Math.Clamp(dto.AlternativesCount ?? 2, 0, 2);
         var result = await RouteGeometryBuilder.BuildAsync(
             roads,
             dto.Waypoints,
@@ -43,6 +44,7 @@ public class PreviewRouteCommandHandler : ICommandHandler<PreviewRouteCommand, O
             _valhallaOptions,
             _routePlanner,
             _valhallaOptions.Enabled,
+            alternativesCount,
             cancellationToken);
 
         var geoJson = GeoJsonConverter.ToGeoJson(result.LineString);
@@ -65,7 +67,14 @@ public class PreviewRouteCommandHandler : ICommandHandler<PreviewRouteCommand, O
 
         var durationS = result.ValhallaDurationS ?? EstimateDurationS(dto.MaxSpeedKmh, km);
 
-        var provider = result.UsedInternalNetwork ? "mine" : "valhalla";
+        // mine: red interna de la mina. valhalla: red vial externa.
+        // none: fallback en línea recta (red interna no conectó y no hubo
+        // trayectoria externa) — el front lo trata como zona no accesible.
+        var provider = result.UsedInternalNetwork
+            ? "mine"
+            : result.ValhallaDurationS.HasValue
+                ? "valhalla"
+                : "none";
 
         var response = new RouteResponse(
             Guid.Empty,

@@ -27,6 +27,7 @@ public class RouteConfiguration : IEntityTypeConfiguration<TRoute>
         builder.Property(r => r.ToleranceM).HasColumnName("tolerance_m").IsRequired();
         builder.Property(r => r.MaxSpeedKmh).HasColumnName("max_speed_kmh");
         builder.Property(r => r.SpeedProfileJson).HasColumnName("speed_profile_json");
+        builder.Property(r => r.WaypointsJson).HasColumnName("waypoints_json");
         builder.Property(r => r.Active).HasColumnName("active").IsRequired();
         builder.Property(r => r.OriginGeofenceId).HasColumnName("origin_geofence_id");
         builder.Property(r => r.DestinationGeofenceId).HasColumnName("destination_geofence_id");

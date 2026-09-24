@@ -1,4 +1,5 @@
-﻿using App.Domain.Geofences.Entities;
+﻿using App.Domain.Vehicles.Entities;
+using App.Domain.Geofences.Entities;
 using App.Domain.Materials.Entities;
 using App.Domain.Notifications.Entities;
 using App.Domain.Routes.Entities;
@@ -28,4 +29,5 @@ public partial class AppDataBaseContext
     public DbSet<TGpsPosition> GpsPositions { get; set; }
     public DbSet<TVehicle> Vehicles { get; set; }
     public DbSet<TVehicleCurrentState> VehicleCurrentStates { get; set; }
+    public DbSet<TDevice> Devices { get; set; }
 }

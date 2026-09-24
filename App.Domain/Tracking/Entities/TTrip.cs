@@ -77,4 +77,25 @@ public class TTrip : BaseDomain
 
     public void AddDeviation() => DeviationCount++;
     public void AddSpeedAlert() => SpeedAlertCount++;
+
+    /// <summary>
+    /// Ajusta el material y la carga de un viaje en curso (operación manual).
+    /// </summary>
+    public void AdjustLoad(Guid? materialId, decimal? loadTonnes)
+    {
+        MaterialId = materialId;
+        LoadTonnes = loadTonnes;
+    }
+
+    /// <summary>Cancela un viaje en curso.</summary>
+    public void Cancel()
+    {
+        if (Status != TripStatus.Active || EndedAt is not null)
+        {
+            return;
+        }
+
+        Status = TripStatus.Cancelled;
+        EndedAt = DateTime.UtcNow;
+    }
 }

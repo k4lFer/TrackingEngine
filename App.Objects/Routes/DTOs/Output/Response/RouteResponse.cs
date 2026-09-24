@@ -1,3 +1,5 @@
+using App.Objects.Shared.DTOs;
+
 namespace App.Objects.Routes.DTOs.Output.Response;
 
 public sealed record RouteAlternativeResponse(
@@ -44,5 +46,6 @@ public record RouteResponse(
     string? Provider = null,
     IReadOnlyList<RouteInstructionResponse>? Instructions = null,
     string? EncodedShape = null,
-    ValhallaSummaryResponse? ValhallaSummary = null
+    ValhallaSummaryResponse? ValhallaSummary = null,
+    IReadOnlyList<CoordinateDto>? Waypoints = null
 );

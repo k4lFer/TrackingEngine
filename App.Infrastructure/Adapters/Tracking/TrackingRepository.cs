@@ -4,8 +4,10 @@ using App.Interfaces.Ports.Tracking;
 using App.Objects.Tracking.DTOs.Output.Response;
 using App.Shared.Geometry;
 using App.Shared.Objects.Enums;
+using App.Shared.Query;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+using System.Linq.Expressions;
 
 namespace App.Infrastructure.Adapters.Tracking;
 
@@ -14,13 +16,10 @@ namespace App.Infrastructure.Adapters.Tracking;
 /// otros módulos (vehículos, geocercas, rutas, materiales) en una sola query con
 /// JOINs que devuelve directamente el DTO de respuesta.
 /// </summary>
-public class TrackingRepository : ITrackingReadRepository, ITrackingWriteRepository
+public class TrackingRepository : BaseRepository<TTrip>, ITrackingReadRepository, ITrackingWriteRepository
 {
-    private readonly AppDataBaseContext _dbc;
-
-    public TrackingRepository(AppDataBaseContext dbc)
+    public TrackingRepository(AppDataBaseContext dbc) : base(dbc)
     {
-        _dbc = dbc;
     }
 
     public async Task<PositionResponse?> GetLatestPositionAsync(
@@ -122,11 +121,10 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
         Guid vehicleId,
         CancellationToken cancellationToken = default)
     {
-        var row = await Trips()
-            .Where(t => t.VehicleId == vehicleId
-                        && t.Status == TripStatus.Active
-                        && t.EndedAt == null)
-            .OrderByDescending(t => t.StartedAt)
+        var row = await Trips(
+                t => t.VehicleId == vehicleId
+                     && t.Status == TripStatus.Active
+                     && t.EndedAt == null)
             .FirstOrDefaultAsync(cancellationToken);
 
         return row?.ToDetail();
@@ -136,8 +134,7 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
         Guid tripId,
         CancellationToken cancellationToken = default)
     {
-        var row = await Trips()
-            .Where(t => t.Id == tripId)
+        var row = await Trips(t => t.Id == tripId)
             .FirstOrDefaultAsync(cancellationToken);
 
         return row?.ToDetail();
@@ -147,9 +144,7 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
         Guid vehicleId,
         CancellationToken cancellationToken = default)
     {
-        var list = await Trips()
-            .Where(t => t.VehicleId == vehicleId)
-            .OrderByDescending(t => t.StartedAt)
+        var list = await Trips(t => t.VehicleId == vehicleId)
             .ToListAsync(cancellationToken);
 
         return list.Select(t => t.ToSummary()).ToList();
@@ -158,11 +153,28 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
     public async Task<List<TripSummaryResponse>> GetAllTripsAsync(
         CancellationToken cancellationToken = default)
     {
-        var list = await Trips()
-            .OrderByDescending(t => t.StartedAt)
-            .ToListAsync(cancellationToken);
+        var list = await Trips().ToListAsync(cancellationToken);
 
         return list.Select(t => t.ToSummary()).ToList();
+    }
+
+    public async Task<QueryResult<TripSummaryResponse>> GetTripsPagedAsync(
+        int page,
+        int pageSize,
+        QueryFilter<TripSummaryResponse>? filter = null,
+        CancellationToken cancellationToken = default)
+    {
+        var all = (await Trips().ToListAsync(cancellationToken))
+            .Select(t => t.ToSummary())
+            .ToList();
+
+        IQueryable<TripSummaryResponse> query = all.AsQueryable();
+        if (filter is not null)
+        {
+            query = filter.ApplyFilter(query);
+        }
+
+        return PaginateInMemory(query.ToList(), page, pageSize);
     }
 
     public async Task<TTrip?> GetActiveTripByVehicleAsync(
@@ -173,6 +185,14 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
             .FirstOrDefaultAsync(
                 t => t.VehicleId == vehicleId && t.Status == TripStatus.Active && t.EndedAt == null,
                 cancellationToken);
+    }
+
+    public async Task<TTrip?> GetTripEntityByIdAsync(
+        Guid tripId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dbc.Trips
+            .FirstOrDefaultAsync(t => t.Id == tripId, cancellationToken);
     }
 
     public async Task<List<TTrip>> GetAllActiveAsync(
@@ -194,10 +214,14 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         => _dbc.SaveChangesAsync(cancellationToken);
 
-    private IQueryable<TripRow> Trips()
+    private IQueryable<TripRow> Trips(Expression<Func<TTrip, bool>>? filter = null)
     {
+        var src = filter == null
+            ? _dbc.Trips.AsNoTracking()
+            : _dbc.Trips.AsNoTracking().Where(filter);
+
         return
-            from t in _dbc.Trips.AsNoTracking()
+            from t in src
             join v in _dbc.Vehicles.AsNoTracking() on t.VehicleId equals v.Id
             join og in _dbc.Geofences.AsNoTracking() on t.OriginGeofenceId equals og.Id into ogc
             from og in ogc.DefaultIfEmpty()
@@ -207,10 +231,14 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
             from r in rc.DefaultIfEmpty()
             join m in _dbc.Materials.AsNoTracking() on t.MaterialId equals m.Id into mc
             from m in mc.DefaultIfEmpty()
+            orderby t.StartedAt descending
             select new TripRow(
                 t.Id,
                 t.VehicleId,
                 v.Code,
+                t.RouteId,
+                t.OriginGeofenceId,
+                t.DestinationGeofenceId,
                 og != null ? og.Name : null,
                 dg != null ? dg.Name : null,
                 r != null ? r.Code : null,
@@ -258,6 +286,9 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
         Guid Id,
         Guid VehicleId,
         string VehicleCode,
+        Guid? RouteId,
+        Guid? OriginGeofenceId,
+        Guid? DestinationGeofenceId,
         string? OriginName,
         string? DestinationName,
         string? RouteCode,
@@ -278,6 +309,9 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
             Id,
             VehicleId,
             VehicleCode,
+            RouteId,
+            OriginGeofenceId,
+            DestinationGeofenceId,
             OriginName,
             DestinationName,
             RouteCode,
@@ -293,6 +327,9 @@ public class TrackingRepository : ITrackingReadRepository, ITrackingWriteReposit
             Id,
             VehicleId,
             VehicleCode,
+            RouteId,
+            OriginGeofenceId,
+            DestinationGeofenceId,
             OriginName,
             DestinationName,
             RouteName,

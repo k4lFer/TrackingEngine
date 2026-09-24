@@ -27,6 +27,7 @@ public sealed class ValhallaRoutePlanner : IRoutePlanner
         RoutingProfile profile,
         GeoCoordinate from,
         GeoCoordinate to,
+        int alternates = 0,
         CancellationToken cancellationToken = default)
     {
         try
@@ -39,7 +40,7 @@ public sealed class ValhallaRoutePlanner : IRoutePlanner
                     new { lon = to.Lon, lat = to.Lat }
                 },
                 costing = ProfileName(profile),
-                alternates = 2,
+                alternates = Math.Clamp(alternates, 0, 2),
                 directions_options = new
                 {
                     units = "kilometers",
@@ -60,7 +61,8 @@ public sealed class ValhallaRoutePlanner : IRoutePlanner
             if (plan is null)
                 return null;
 
-            return plan with { Alternatives = DecodeAlternates(json["alternates"]) };
+            var limit = Math.Clamp(alternates, 0, 2);
+            return plan with { Alternatives = DecodeAlternates(json["alternates"]).Take(limit).ToList() };
         }
         catch (Exception)
         {

@@ -7,4 +7,5 @@ public class RoutePreviewRequest
     public List<CoordinateDto> Waypoints { get; set; }
     public int ToleranceM { get; set; }
     public int? MaxSpeedKmh { get; set; }
+    public int? AlternativesCount { get; set; }
 }

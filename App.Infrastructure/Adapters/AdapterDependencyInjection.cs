@@ -1,4 +1,5 @@
-﻿using App.Infrastructure.Adapters.Geofences;
+﻿using App.Infrastructure.Adapters.Devices;
+using App.Infrastructure.Adapters.Geofences;
 using App.Infrastructure.Adapters.Materials;
 using App.Infrastructure.Adapters.Roads;
 using App.Infrastructure.Adapters.Routes;
@@ -6,6 +7,7 @@ using App.Infrastructure.Adapters.Tracking;
 using App.Infrastructure.Adapters.User;
 using App.Infrastructure.Adapters.Vehicles;
 using App.Interfaces.Ports;
+using App.Interfaces.Ports.Devices;
 using App.Interfaces.Ports.Geofences;
 using App.Interfaces.Ports.Materials;
 using App.Interfaces.Ports.Roads;
@@ -29,12 +31,17 @@ public static class AdapterDependencyInjection
         services.AddScoped<IRefreshTokenQueryRepository, RefreshTokenQueryRepository>();
         services.AddScoped<IVerificationRepository, VerificationRepository>();
         services.AddScoped<IVehicleRepository, VehicleRepository>();
+        services.AddScoped<IVehicleQueryRepository, VehicleQueryRepository>();
+        services.AddScoped<IDeviceRepository, DeviceRepository>();
         services.AddScoped<IGeofenceRepository, GeofenceRepository>();
+        services.AddScoped<IGeofenceQueryRepository, GeofenceQueryRepository>();
         services.AddScoped<IMaterialRepository, MaterialRepository>();
         services.AddScoped<IMaterialQueryRepository, MaterialRepository>();
         services.AddScoped<IRoadRepository, RoadRepository>();
+        services.AddScoped<IRoadQueryRepository, RoadQueryRepository>();
         services.AddScoped<IRouteRepository, RouteRepository>();
         services.AddScoped<IRouteGeometryRepository, RouteRepository>();
+        services.AddScoped<IRouteQueryRepository, RouteQueryRepository>();
         services.AddScoped<ITrackingReadRepository, TrackingRepository>();
         services.AddScoped<ITrackingWriteRepository, TrackingRepository>();
 

@@ -1,4 +1,5 @@
-﻿using App.Shared.Validation;
+﻿using App.Interfaces.Ports.Tracking;
+using App.Shared.Validation;
 using Cortex.Mediator.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +18,11 @@ public static class UseCasesDependencyInjection
             .AddClasses(c => c.AssignableTo(typeof(IInputValidator<>)))
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+        // ── Ingesta GPS genérica: un decodificador por protocolo. ─────────────
+        services.AddSingleton<IGpsDeviceDecoder, App.UseCases.Gps.Decoders.OsmAndQueryDecoder>();
+        services.AddSingleton<IGpsDeviceDecoder, App.UseCases.Gps.Decoders.Tk103FrameDecoder>();
+        services.AddScoped<Gps.GpsIngestionService>();
 
         return services;
     }

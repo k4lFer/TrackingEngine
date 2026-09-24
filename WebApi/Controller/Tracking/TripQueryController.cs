@@ -1,3 +1,4 @@
+using App.Objects.Tracking.DTOs.Input.Query;
 using App.UseCases.Tracking.Query.GetAllTrips;
 using App.UseCases.Tracking.Query.GetByIdTrip;
 using App.UseCases.Tracking.Query.GetTripsByVehicle;
@@ -25,12 +26,12 @@ public class TripQueryController : ControllerBase
     [HttpGet]
     [AllowAnonymous]
     [EndpointSummary("Listar viajes")]
-    [EndpointDescription("Obtiene todos los viajes (ida cargada y retorno) con sus datos de resumen")]
+    [EndpointDescription("Obtiene todos los viajes (ida cargada y retorno) con sus datos de resumen. Admite paginación (NumberPage/PageSize) y filtros (Search, Status, FromDate, ToDate).")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] TripFilterDto filter, CancellationToken cancellationToken)
     {
-        var query = new GetAllTripsQuery();
+        var query = new GetAllTripsQuery(filter);
         var result = await _mediator.SendQueryAsync(query, cancellationToken);
         return ResponseHelper.GetActionResult(result);
     }

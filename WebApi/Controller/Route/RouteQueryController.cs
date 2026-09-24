@@ -1,3 +1,4 @@
+using App.Objects.Routes.DTOs.Input.Query;
 using App.UseCases.Routes.Query.GetAll;
 using App.UseCases.Routes.Query.GetById;
 using Cortex.Mediator;
@@ -23,12 +24,12 @@ public class RouteQueryController : ControllerBase
     [HttpGet]
     [AllowAnonymous]
     [EndpointSummary("Listar rutas")]
-    [EndpointDescription("Obtiene todas las rutas activas con sus geocercas de origen y destino")]
+    [EndpointDescription("Obtiene las rutas activas con sus geocercas de origen y destino. Admite paginación (NumberPage/PageSize) y filtros (Search, Active).")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] RouteFilterDto filter, CancellationToken cancellationToken)
     {
-        var query = new GetAllRouteQuery();
+        var query = new GetAllRouteQuery(filter);
         var result = await _mediator.SendQueryAsync(query, cancellationToken);
         return ResponseHelper.GetActionResult(result);
     }

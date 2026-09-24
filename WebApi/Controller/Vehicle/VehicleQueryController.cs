@@ -1,3 +1,4 @@
+using App.Objects.Vehicles.DTOs.Input.Query;
 using App.UseCases.Vehicles.Query.GetAll;
 using App.UseCases.Vehicles.Query.GetById;
 using Cortex.Mediator;
@@ -23,12 +24,12 @@ public class VehicleQueryController : ControllerBase
     [HttpGet]
     [AllowAnonymous]
     [EndpointSummary("Listar vehículos")]
-    [EndpointDescription("Obtiene todos los vehículos junto con su estado en vivo")]
+    [EndpointDescription("Obtiene todos los vehículos junto con su estado en vivo. Admite paginación (NumberPage/PageSize) y filtros (Search, State, OnlyOnline).")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] VehicleFilterDto filter, CancellationToken cancellationToken)
     {
-        var query = new GetAllVehicleQuery();
+        var query = new GetAllVehicleQuery(filter);
         var result = await _mediator.SendQueryAsync(query, cancellationToken);
         return ResponseHelper.GetActionResult(result);
     }
@@ -36,12 +37,12 @@ public class VehicleQueryController : ControllerBase
     [HttpGet("status")]
     [AllowAnonymous]
     [EndpointSummary("Estado en vivo de los vehículos")]
-    [EndpointDescription("Obtiene el estado actual de todos los vehículos (posicion, viaje activo)")]
+    [EndpointDescription("Obtiene el estado actual de todos los vehículos (posicion, viaje activo). Admite paginación y filtros (Search, State, OnlyOnline).")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAllWithStatus(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAllWithStatus([FromQuery] VehicleFilterDto filter, CancellationToken cancellationToken)
     {
-        var query = new GetAllVehicleQuery();
+        var query = new GetAllVehicleQuery(filter);
         var result = await _mediator.SendQueryAsync(query, cancellationToken);
         return ResponseHelper.GetActionResult(result);
     }

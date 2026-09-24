@@ -1,4 +1,4 @@
-using App.Shared.Domain;
+﻿using App.Shared.Domain;
 using NetTopologySuite.Geometries;
 
 namespace App.Domain.Tracking.Entities;
@@ -6,7 +6,9 @@ namespace App.Domain.Tracking.Entities;
 public class TGpsPosition : BaseDomain
 {
     public Guid VehicleId { get; private set; }
-    public int DeviceId { get; private set; }
+
+    /// <summary>Identificador del dispositivo que reportó (IMEI, id de Traccar…).</summary>
+    public string? DeviceId { get; private set; }
     public DateTime RecordedAt { get; private set; }
     public DateTime ReceivedAt { get; private set; }
     public Point Geometry { get; private set; } = null!;
@@ -21,7 +23,7 @@ public class TGpsPosition : BaseDomain
 
     private TGpsPosition(
         Guid vehicleId,
-        int deviceId,
+        string? deviceId,
         DateTime recordedAt,
         Point geometry,
         decimal? speedKmh,
@@ -46,7 +48,7 @@ public class TGpsPosition : BaseDomain
 
     public static TGpsPosition Create(
         Guid vehicleId,
-        int deviceId,
+        string? deviceId,
         DateTime recordedAt,
         Point geometry,
         decimal? speedKmh,

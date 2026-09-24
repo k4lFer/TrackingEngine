@@ -2,6 +2,7 @@ using App.Objects.Routes.DTOs.Input.Command;
 using App.UseCases.Routes.Command.Create;
 using App.UseCases.Routes.Command.Delete;
 using App.UseCases.Routes.Command.Preview;
+using App.UseCases.Routes.Command.Update;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -45,6 +46,20 @@ public class RouteCommandController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateRouteRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateRouteCommand(request);
+        var result = await _mediator.SendCommandAsync(command, cancellationToken);
+        return ResponseHelper.GetActionResult(result);
+    }
+
+    [HttpPut("{id:guid}")]
+    [AllowAnonymous]
+    [EndpointSummary("Actualizar ruta")]
+    [EndpointDescription("Re-enruta y actualiza los datos de una ruta existente (solo ruta principal)")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRouteRequest request, CancellationToken cancellationToken)
+    {
+        var command = new UpdateRouteCommand(id, request);
         var result = await _mediator.SendCommandAsync(command, cancellationToken);
         return ResponseHelper.GetActionResult(result);
     }

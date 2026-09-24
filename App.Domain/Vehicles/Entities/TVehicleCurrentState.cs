@@ -82,4 +82,16 @@ public class TVehicleCurrentState : BaseDomain
         OffRouteStreak = 0;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    /// <summary>Apaga el estado del vehículo: Offline, sin posición, sin viaje ni geofence activos.</summary>
+    public void ResetToOffline()
+    {
+        State = VehicleState.Offline;
+        LastGeom = null;
+        LastReportedAt = null;
+        LastReceivedAt = null;
+        CurrentGeofenceId = null;
+        ActiveTripId = null;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

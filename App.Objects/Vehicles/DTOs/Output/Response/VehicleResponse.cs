@@ -6,5 +6,8 @@ public record VehicleResponse(
     string Plate,
     string Brand,
     string Model,
-    bool Active
+    bool Active,
+    string? DeviceIdentifier,
+    int? DeviceKind,
+    string? DeviceModel
 );

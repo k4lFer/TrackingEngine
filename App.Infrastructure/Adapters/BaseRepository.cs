@@ -43,6 +43,31 @@ public abstract class BaseRepository<TDomain> : IBaseRepository<TDomain> where T
         );
     }
 
+    /// <summary>
+    /// Paginación en memoria para los repositorios de consulta cuyos DTOs se
+    /// proyectan a partir de mappings no traducibles a SQL (GeoJSON, alternativas).
+    /// Los listados de catálogo manejan decenas/cientos de registros, así que el
+    /// costo extra es insignificante frente a la claridad que aporta.
+    /// </summary>
+    protected QueryResult<T> PaginateInMemory<T>(IReadOnlyList<T> source, int pageNumber, int pageSize)
+        where T : class
+    {
+        var validPageNumber = pageNumber < 1 ? 1 : pageNumber;
+        var validPageSize = pageSize <= 0 ? 10 : pageSize;
+
+        var totalCount = source.Count;
+        var totalPages = (int)Math.Ceiling(totalCount / (double)validPageSize);
+        var items = source.Skip((validPageNumber - 1) * validPageSize).Take(validPageSize).ToList();
+
+        return QueryResult<T>.Success(
+            results: items,
+            totalCount: totalCount,
+            totalPages: totalPages,
+            pageNumber: validPageNumber,
+            pageSize: validPageSize
+        );
+    }
+
     public async Task AddAsync(TDomain domain, CancellationToken cancellationToken = default)
     {
         await _dbc.Set<TDomain>().AddAsync(domain, cancellationToken);

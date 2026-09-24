@@ -19,7 +19,7 @@ public class GpsPositionConfiguration : IEntityTypeConfiguration<TGpsPosition>
             .ValueGeneratedNever()
             .IsRequired();
         builder.Property(p => p.VehicleId).HasColumnName("vehicle_id").HasColumnType("uuid").IsRequired();
-        builder.Property(p => p.DeviceId).HasColumnName("device_id").IsRequired();
+        builder.Property(p => p.DeviceId).HasColumnName("device_id").HasMaxLength(64);
         builder.Property(p => p.RecordedAt).HasColumnName("recorded_at").IsRequired();
         builder.Property(p => p.ReceivedAt).HasColumnName("received_at").IsRequired();
         builder.Property(p => p.Geometry)

@@ -1,3 +1,4 @@
+using App.Objects.Materials.DTOs.Input.Query;
 using App.UseCases.Materials.Query.GetAll;
 using App.UseCases.Materials.Query.GetById;
 using Cortex.Mediator;
@@ -23,12 +24,12 @@ public class MaterialQueryController : ControllerBase
     [HttpGet]
     [AllowAnonymous]
     [EndpointSummary("Listar materiales")]
-    [EndpointDescription("Obtiene todos los materiales registrados")]
+    [EndpointDescription("Obtiene todos los materiales registrados. Admite paginación (NumberPage/PageSize) y filtros (Search, Active).")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] MaterialFilterDto filter, CancellationToken cancellationToken)
     {
-        var query = new GetAllMaterialQuery();
+        var query = new GetAllMaterialQuery(filter);
         var result = await _mediator.SendQueryAsync(query, cancellationToken);
         return ResponseHelper.GetActionResult(result);
     }

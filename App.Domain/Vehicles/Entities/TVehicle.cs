@@ -42,6 +42,17 @@ public class TVehicle : BaseDomain
         AddDomainEvent(new VehicleUpdatedEvent(Id, Code, Plate, Brand, Model, Active));
     }
 
+    /// <summary>
+    /// Apaga el vehículo cuando queda sin dispositivo: descarta la última posición
+    /// y resetea el estado en curso (Offline, sin viaje ni geofence activos).
+    /// </summary>
+    public void GoOffline()
+    {
+        LastPosition = null;
+        LastReportedAt = null;
+        CurrentState?.ResetToOffline();
+    }
+
     public void RecordLastPosition(Point? position, DateTime reportedAt)
     {
         LastPosition = position;

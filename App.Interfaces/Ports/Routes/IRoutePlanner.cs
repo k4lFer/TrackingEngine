@@ -6,11 +6,16 @@ namespace App.Interfaces.Ports.Routes;
 
 public interface IRoutePlanner
 {
-    /// <summary>Devuelve la ruta por red vial (puntos lat/lon), null si no hay camino.</summary>
+    /// <summary>
+    /// Devuelve la ruta por red vial (puntos lat/lon), null si no hay camino.
+    /// <paramref name="alternates"/> indica cuántas variantes alternativas pedir
+    /// al proveedor (0 = ninguna).
+    /// </summary>
     Task<RoutePlan?> PlanAsync(
         RoutingProfile profile,
         GeoCoordinate from,
         GeoCoordinate to,
+        int alternates = 0,
         CancellationToken cancellationToken = default);
 }
 

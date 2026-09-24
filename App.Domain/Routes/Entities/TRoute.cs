@@ -27,6 +27,13 @@ public class TRoute : BaseDomain
     public string? SpeedProfileJson { get; private set; }
 
     /// <summary>
+    /// Puntos de paso (waypoints) con los que se trazó la ruta, serializados
+    /// como JSON. Se persisten para que al editar se reproduzca el mismo trazado
+    /// (en lugar de volver a sembrar muestras de la geometría calculada).
+    /// </summary>
+    public string? WaypointsJson { get; private set; }
+
+    /// <summary>
     /// Identificador del grupo de variantes de una misma ruta (la principal y
     /// sus alternas comparten el mismo RouteGroupId). Null cuando la ruta no
     /// tiene variantes.
@@ -47,6 +54,7 @@ public class TRoute : BaseDomain
         Guid? originGeofenceId,
         Guid? destinationGeofenceId,
         string? speedProfileJson,
+        string? waypointsJson,
         Guid? routeGroupId,
         int alternativeRank)
     {
@@ -58,6 +66,7 @@ public class TRoute : BaseDomain
         OriginGeofenceId = originGeofenceId;
         DestinationGeofenceId = destinationGeofenceId;
         SpeedProfileJson = speedProfileJson;
+        WaypointsJson = waypointsJson;
         RouteGroupId = routeGroupId;
         AlternativeRank = alternativeRank;
         Active = true;
@@ -72,6 +81,7 @@ public class TRoute : BaseDomain
         Guid? originGeofenceId,
         Guid? destinationGeofenceId,
         string? speedProfileJson,
+        string? waypointsJson = null,
         Guid? routeGroupId = null,
         int alternativeRank = 0)
     {
@@ -84,10 +94,38 @@ public class TRoute : BaseDomain
             originGeofenceId,
             destinationGeofenceId,
             speedProfileJson,
+            waypointsJson,
             routeGroupId,
             alternativeRank);
 
         r.AddDomainEvent(new RouteCreatedEvent(r.Id, r.Code, r.Name, r.OriginGeofenceId, r.DestinationGeofenceId));
         return r;
+    }
+
+    public void Update(
+        string name,
+        LineString geometry,
+        int toleranceM,
+        int? maxSpeedKmh,
+        Guid? originGeofenceId,
+        Guid? destinationGeofenceId,
+        string? speedProfileJson,
+        string? waypointsJson,
+        bool active)
+    {
+        Name = name;
+        Geometry = geometry;
+        ToleranceM = toleranceM;
+        MaxSpeedKmh = maxSpeedKmh;
+        OriginGeofenceId = originGeofenceId;
+        DestinationGeofenceId = destinationGeofenceId;
+        SpeedProfileJson = speedProfileJson;
+        WaypointsJson = waypointsJson;
+        Active = active;
+    }
+
+    public void AssignGroup(Guid? routeGroupId)
+    {
+        RouteGroupId = routeGroupId;
     }
 }

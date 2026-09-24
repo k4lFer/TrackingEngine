@@ -1,3 +1,4 @@
+using App.Objects.Geofences.DTOs.Input.Query;
 using App.UseCases.Geofences.Query.CheckPoint;
 using App.UseCases.Geofences.Query.GetAll;
 using App.UseCases.Geofences.Query.GetById;
@@ -24,12 +25,12 @@ public class GeofenceQueryController : ControllerBase
     [HttpGet]
     [AllowAnonymous]
     [EndpointSummary("Listar geofences")]
-    [EndpointDescription("Obtiene todos los geofences registrados")]
+    [EndpointDescription("Obtiene todos los geofences registrados. Admite paginación (NumberPage/PageSize) y filtros (Search, Active).")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll([FromQuery] GeofenceFilterDto filter, CancellationToken cancellationToken)
     {
-        var query = new GetAllGeofenceQuery();
+        var query = new GetAllGeofenceQuery(filter);
         var result = await _mediator.SendQueryAsync(query, cancellationToken);
         return ResponseHelper.GetActionResult(result);
     }

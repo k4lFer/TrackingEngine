@@ -1,3 +1,4 @@
+using App.Objects.Routes.DTOs.Input.Query;
 using App.Objects.Routes.DTOs.Output.Response;
 using App.Shared.Query;
 using App.Shared.Result;
@@ -7,4 +8,10 @@ namespace App.UseCases.Routes.Query.GetAll;
 
 public class GetAllRouteQuery : IQuery<OutputPort<QueryResult<RouteResponse>>>
 {
+    public RouteFilterDto Filter { get; }
+
+    public GetAllRouteQuery(RouteFilterDto filter)
+    {
+        Filter = filter;
+    }
 }

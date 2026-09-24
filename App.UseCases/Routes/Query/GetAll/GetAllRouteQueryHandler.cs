@@ -1,26 +1,36 @@
-using System.Net;
 using App.Interfaces.Ports.Routes;
 using App.Objects.Routes.DTOs.Output.Response;
 using App.Shared.Query;
 using App.Shared.Result;
+using App.UseCases.Routes.Query.Filter;
 using Cortex.Mediator.Queries;
 
 namespace App.UseCases.Routes.Query.GetAll;
 
 public class GetAllRouteQueryHandler : IQueryHandler<GetAllRouteQuery, OutputPort<QueryResult<RouteResponse>>>
 {
-    private readonly IRouteRepository _routeRepository;
+    private readonly IRouteQueryRepository _routeQueryRepository;
 
-    public GetAllRouteQueryHandler(IRouteRepository routeRepository)
+    public GetAllRouteQueryHandler(IRouteQueryRepository routeQueryRepository)
     {
-        _routeRepository = routeRepository;
+        _routeQueryRepository = routeQueryRepository;
     }
 
     public async Task<OutputPort<QueryResult<RouteResponse>>> Handle(GetAllRouteQuery query, CancellationToken cancellationToken)
     {
-        var results = await _routeRepository.GetAllActiveAsync(cancellationToken);
+        var filter = new FilterAllRoutes
+        {
+            Search = query.Filter.Search,
+            Active = query.Filter.Active,
+        };
 
-        return OutputPort<QueryResult<RouteResponse>>.Success(
-            data: QueryResult<RouteResponse>.Success(results, results.Count, 1, 1, results.Count));
+        var results = await _routeQueryRepository.GetRoutesPagedAsync(
+            query.Filter.NumberPage,
+            query.Filter.PageSize,
+            filter,
+            query.Filter.Active ?? true,
+            cancellationToken);
+
+        return OutputPort<QueryResult<RouteResponse>>.Success(data: results);
     }
 }

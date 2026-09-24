@@ -11,6 +11,7 @@ using Scalar.AspNetCore;
 using WebApi.Scalar;
 using App.Shared.Security;
 using WebApi;
+using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddUseCasesDi();
 
 builder.Services.AddSingleton<ITrackingNotifier, SignalRTrackingNotifier>();
+
+builder.Services.AddHostedService<GpsTcpGatewayHostedService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

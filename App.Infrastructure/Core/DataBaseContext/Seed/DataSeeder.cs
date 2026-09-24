@@ -187,7 +187,7 @@ public static class DataSeeder
 
             positions.Add(TGpsPosition.Create(
                 vehicle.Id,
-                vehicleIndex + 1,
+                $"SEED-{vehicleIndex + 1}",
                 startTime.AddSeconds(i * 5),
                 _gf.CreatePoint(new Coordinate(lon, lat)),
                 Math.Round((decimal)speed, 1),

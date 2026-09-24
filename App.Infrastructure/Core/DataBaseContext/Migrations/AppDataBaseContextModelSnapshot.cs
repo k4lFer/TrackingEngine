@@ -34,6 +34,42 @@ namespace App.Infrastructure.Core.DataBaseContext.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("App.Domain.Vehicles.Entities.TDevice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("identifier");
+
+                    b.Property<int>("Kind")
+                        .HasColumnType("integer")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("Model")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("model");
+
+                    b.Property<Guid?>("VehicleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vehicle_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Identifier")
+                        .IsUnique();
+
+                    b.HasIndex("VehicleId")
+                        .IsUnique();
+
+                    b.ToTable("devices", "fleet");
+                });
+
             modelBuilder.Entity("App.Domain.Geofences.Entities.TGeofence", b =>
                 {
                     b.Property<Guid>("Id")
@@ -269,6 +305,10 @@ namespace App.Infrastructure.Core.DataBaseContext.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("tolerance_m");
 
+                    b.Property<string>("WaypointsJson")
+                        .HasColumnType("text")
+                        .HasColumnName("waypoints_json");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Active");
@@ -291,8 +331,9 @@ namespace App.Infrastructure.Core.DataBaseContext.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<int>("DeviceId")
-                        .HasColumnType("integer")
+                    b.Property<string>("DeviceId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
                         .HasColumnName("device_id");
 
                     b.Property<Point>("Geometry")
