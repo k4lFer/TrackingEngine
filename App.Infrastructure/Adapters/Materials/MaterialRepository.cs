@@ -2,7 +2,7 @@ using App.Domain.Materials.Entities;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Interfaces.Ports.Materials;
 using App.Objects.Materials.DTOs.Output.Response;
-using App.Shared.Query;
+using App.Shared.Common.Query;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Infrastructure.Adapters.Materials;

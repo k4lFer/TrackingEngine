@@ -1,6 +1,6 @@
 using App.Domain.Vehicles.Events;
-using App.Shared.Domain;
-using App.Shared.Objects.Enums;
+using App.Shared.Common.Domain;
+using App.Shared.Common.Enums;
 using NetTopologySuite.Geometries;
 
 namespace App.Domain.Vehicles.Entities;

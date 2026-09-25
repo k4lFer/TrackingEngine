@@ -1,4 +1,4 @@
-using App.Shared.Query;
+using App.Shared.Common.Query;
 
 namespace App.Objects.Routes.DTOs.Input.Query;
 

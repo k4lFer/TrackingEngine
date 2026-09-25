@@ -1,7 +1,7 @@
 using App.Interfaces.Ports.Routes;
 using App.Objects.Routes.DTOs.Output.Response;
-using App.Shared.Query;
-using App.Shared.Result;
+using App.Shared.Common.Query;
+using App.Shared.Common.Result;
 using App.UseCases.Routes.Query.Filter;
 using Cortex.Mediator.Queries;
 

@@ -1,6 +1,6 @@
 using App.Objects.Geofences.DTOs.Input.Command;
 using App.Objects.Geofences.DTOs.Output.Response;
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Geofences.Command.Update;

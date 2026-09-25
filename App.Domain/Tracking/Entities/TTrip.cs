@@ -1,6 +1,6 @@
 using App.Domain.Tracking.Events;
-using App.Shared.Domain;
-using App.Shared.Objects.Enums;
+using App.Shared.Common.Domain;
+using App.Shared.Common.Enums;
 using NetTopologySuite.Geometries;
 
 namespace App.Domain.Tracking.Entities;

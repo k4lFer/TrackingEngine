@@ -1,7 +1,7 @@
 using System.Net;
 using App.Objects.User.DTOs.Input.Command;
-using App.Shared.Result;
-using App.Shared.Validation;
+using App.Shared.Common.Result;
+using App.Shared.Common.Validation;
 
 namespace App.UseCases.Auth.Command.SignUp;
 

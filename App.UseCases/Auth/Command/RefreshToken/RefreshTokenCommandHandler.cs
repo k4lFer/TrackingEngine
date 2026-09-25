@@ -4,9 +4,9 @@ using App.Interfaces.Ports;
 using App.Interfaces.Ports.Auth;
 using App.Interfaces.Ports.User;
 using App.Objects.User.DTOs.Output.Response;
-using App.Shared.Objects.Enums;
-using App.Shared.Result;
-using App.Shared.Security;
+using App.Shared.Common.Enums;
+using App.Shared.Common.Result;
+using App.Shared.Common.Security;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Auth.Command.RefreshToken;

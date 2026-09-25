@@ -1,7 +1,7 @@
 using System.Net;
 using App.Interfaces.Ports.Routes;
 using App.Objects.Routes.DTOs.Output.Response;
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Routes.Command.Delete;

@@ -1,11 +1,11 @@
-﻿using System.Net;
+using System.Net;
 using App.Domain.Vehicles.Entities;
 using App.Interfaces.Ports;
 using App.Interfaces.Ports.Devices;
 using App.Interfaces.Ports.Vehicles;
 using App.Objects.Vehicles.DTOs.Output.Response;
-using App.Shared.Objects.Enums;
-using App.Shared.Result;
+using App.Shared.Common.Enums;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Vehicles.Command.Create;

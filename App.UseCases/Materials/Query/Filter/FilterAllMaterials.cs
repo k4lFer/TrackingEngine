@@ -1,5 +1,5 @@
 using App.Objects.Materials.DTOs.Output.Response;
-using App.Shared.Query;
+using App.Shared.Common.Query;
 
 namespace App.UseCases.Materials.Query.Filter;
 

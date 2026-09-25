@@ -1,5 +1,5 @@
 using App.Domain.Materials.Events;
-using App.Shared.Domain;
+using App.Shared.Common.Domain;
 
 namespace App.Domain.Materials.Entities;
 

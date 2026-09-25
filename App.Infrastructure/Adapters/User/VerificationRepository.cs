@@ -1,7 +1,7 @@
 using App.Domain.User.Entities;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Interfaces.Ports.User;
-using App.Shared.Objects.Enums;
+using App.Shared.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Infrastructure.Adapters.User;

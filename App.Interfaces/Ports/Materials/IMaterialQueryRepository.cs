@@ -1,6 +1,6 @@
 using App.Domain.Materials.Entities;
 using App.Objects.Materials.DTOs.Output.Response;
-using App.Shared.Query;
+using App.Shared.Common.Query;
 
 namespace App.Interfaces.Ports.Materials;
 

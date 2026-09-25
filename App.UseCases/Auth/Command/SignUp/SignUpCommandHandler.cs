@@ -2,9 +2,9 @@ using App.Domain.User.Entities;
 using App.Interfaces.Ports;
 using App.Interfaces.Ports.User;
 using App.Objects.User.DTOs.Input.Command;
-using App.Shared.Result;
-using App.Shared.Security;
-using App.Shared.Validation;
+using App.Shared.Common.Result;
+using App.Shared.Common.Security;
+using App.Shared.Common.Validation;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Auth.Command.SignUp;

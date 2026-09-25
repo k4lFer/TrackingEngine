@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
-using App.Shared.Domain;
-using App.Shared.Security;
+using App.Shared.Common.Domain;
+using App.Shared.Common.Security;
 using Cortex.Mediator;
 
 namespace App.Infrastructure.Core.Services;

@@ -2,7 +2,7 @@ using App.Domain.Vehicles.Entities;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Interfaces.Ports.Vehicles;
 using App.Objects.Vehicles.DTOs.Output.Response;
-using App.Shared.Query;
+using App.Shared.Common.Query;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Infrastructure.Adapters.Vehicles;

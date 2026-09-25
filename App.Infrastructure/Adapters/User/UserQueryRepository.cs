@@ -2,7 +2,7 @@ using App.Domain.User.Entities;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Interfaces.Ports.User;
 using App.Objects.User.DTOs.Output.Response;
-using App.Shared.Query;
+using App.Shared.Common.Query;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Infrastructure.Adapters.User;

@@ -4,7 +4,7 @@ using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Interfaces.Ports.Routes;
 using App.Objects.Routes.DTOs.Output.Response;
 using App.Objects.Shared.DTOs;
-using App.Shared.Geometry;
+using App.Shared.Utils.Geometry;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Infrastructure.Adapters.Routes;

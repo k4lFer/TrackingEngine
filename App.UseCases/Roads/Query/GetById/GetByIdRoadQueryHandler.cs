@@ -1,8 +1,8 @@
 using System.Net;
 using App.Interfaces.Ports.Roads;
 using App.Objects.Roads.DTOs.Output.Response;
-using App.Shared.Geometry;
-using App.Shared.Result;
+using App.Shared.Utils.Geometry;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Queries;
 
 namespace App.UseCases.Roads.Query.GetById;

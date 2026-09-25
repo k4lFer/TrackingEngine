@@ -4,7 +4,7 @@ using App.Domain.Routes.Entities;
 using App.Interfaces.Ports.Geofences;
 using App.Interfaces.Ports.Routes;
 using App.Objects.Routes.DTOs.Output.Response;
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using App.UseCases.Routes.Common;
 using Cortex.Mediator.Commands;
 

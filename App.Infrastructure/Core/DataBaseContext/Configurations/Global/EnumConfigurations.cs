@@ -1,4 +1,4 @@
-﻿using App.Shared.Objects.Enums;
+using App.Shared.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Infrastructure.Core.DataBaseContext.Configurations.Global;

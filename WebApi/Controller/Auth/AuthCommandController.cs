@@ -1,5 +1,5 @@
 using App.Objects.User.DTOs.Input.Command;
-using App.Shared.Security;
+using App.Shared.Common.Security;
 using App.UseCases.Auth.Command.Login;
 using App.UseCases.Auth.Command.Logout;
 using App.UseCases.Auth.Command.RefreshToken;

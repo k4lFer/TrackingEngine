@@ -1,6 +1,6 @@
-using App.Shared.Geometry;
-using App.Shared.Objects.Enums;
-using App.Shared.Routing;
+using App.Shared.Utils.Geometry;
+using App.Shared.Common.Enums;
+using App.Shared.Common.Routing;
 
 namespace App.Interfaces.Ports.Routes;
 

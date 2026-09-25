@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using App.Shared.Security;
+using App.Shared.Common.Security;
 
 namespace WebApi
 {

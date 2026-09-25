@@ -1,6 +1,7 @@
 ﻿using App.Infrastructure.Adapters.Devices;
 using App.Infrastructure.Adapters.Geofences;
 using App.Infrastructure.Adapters.Materials;
+using App.Infrastructure.Adapters.Notifications;
 using App.Infrastructure.Adapters.Roads;
 using App.Infrastructure.Adapters.Routes;
 using App.Infrastructure.Adapters.Tracking;
@@ -44,6 +45,7 @@ public static class AdapterDependencyInjection
         services.AddScoped<IRouteQueryRepository, RouteQueryRepository>();
         services.AddScoped<ITrackingReadRepository, TrackingRepository>();
         services.AddScoped<ITrackingWriteRepository, TrackingRepository>();
+        services.AddSingleton<ITrackingNotifier, SignalRTrackingNotifier>();
 
         var valhalla = configuration.GetSection("Routing:Valhalla").Get<ValhallaOptions>() ?? new ValhallaOptions();
         services.AddSingleton(valhalla);

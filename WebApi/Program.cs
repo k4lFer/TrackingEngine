@@ -1,17 +1,16 @@
 using App.Infrastructure;
+using App.Infrastructure.Adapters.Notifications;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Infrastructure.Core.DataBaseContext.Seed;
-using App.Interfaces.Ports.Tracking;
 using App.UseCases;
 using WebApi.Config;
-using WebApi.Hubs;
-using WebApi.Notifications;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using WebApi.Scalar;
-using App.Shared.Security;
+using App.Shared.Common.Security;
 using WebApi;
 using WebApi.Services;
+using WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,8 +34,6 @@ builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddUseCasesDi();
 
-builder.Services.AddSingleton<ITrackingNotifier, SignalRTrackingNotifier>();
-
 builder.Services.AddHostedService<GpsTcpGatewayHostedService>();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -56,6 +53,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseCors("FrontendDev");
 app.UseAuthentication();

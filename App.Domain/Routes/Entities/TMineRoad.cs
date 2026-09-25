@@ -1,5 +1,5 @@
 using App.Domain.Routes.Events;
-using App.Shared.Domain;
+using App.Shared.Common.Domain;
 using NetTopologySuite.Geometries;
 
 namespace App.Domain.Routes.Entities;

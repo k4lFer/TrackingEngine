@@ -1,4 +1,4 @@
-using App.Shared.Domain;
+using App.Shared.Common.Domain;
 
 namespace App.Domain.Geofences.Events;
 

@@ -1,7 +1,7 @@
 using App.Interfaces.Ports.Geofences;
 using App.Objects.Geofences.DTOs.Output.Response;
-using App.Shared.Query;
-using App.Shared.Result;
+using App.Shared.Common.Query;
+using App.Shared.Common.Result;
 using App.UseCases.Geofences.Query.Filter;
 using Cortex.Mediator.Queries;
 

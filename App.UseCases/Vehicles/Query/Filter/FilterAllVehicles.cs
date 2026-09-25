@@ -1,6 +1,6 @@
 using App.Objects.Vehicles.DTOs.Output.Response;
-using App.Shared.Objects.Enums;
-using App.Shared.Query;
+using App.Shared.Common.Enums;
+using App.Shared.Common.Query;
 
 namespace App.UseCases.Vehicles.Query.Filter;
 

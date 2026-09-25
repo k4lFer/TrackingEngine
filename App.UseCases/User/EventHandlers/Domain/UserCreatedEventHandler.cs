@@ -1,7 +1,7 @@
 using App.Domain.User.Events;
 using App.Interfaces.Ports;
 using App.Interfaces.Ports.User;
-using App.Shared.Objects.Enums;
+using App.Shared.Common.Enums;
 using Cortex.Mediator;
 using Cortex.Mediator.Notifications;
 using Microsoft.Extensions.Logging;

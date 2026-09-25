@@ -1,5 +1,5 @@
 using App.Objects.Tracking.DTOs.Output.Response;
-using App.Shared.Query;
+using App.Shared.Common.Query;
 
 namespace App.UseCases.Tracking.Query.Filter;
 

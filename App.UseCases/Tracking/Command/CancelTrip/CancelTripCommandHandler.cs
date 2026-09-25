@@ -2,8 +2,8 @@ using System.Net;
 using App.Domain.Tracking.Entities;
 using App.Interfaces.Ports.Tracking;
 using App.Objects.Tracking.DTOs.Output.Response;
-using App.Shared.Objects.Enums;
-using App.Shared.Result;
+using App.Shared.Common.Enums;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Tracking.Command.CancelTrip;

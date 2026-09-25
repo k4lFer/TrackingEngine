@@ -1,5 +1,5 @@
-﻿using App.Domain.User.Events;
-using App.Shared.Domain;
+using App.Domain.User.Events;
+using App.Shared.Common.Domain;
 
 namespace App.Domain.User.Entities;
 

@@ -1,8 +1,8 @@
-﻿using System.Net;
+using System.Net;
 using App.Interfaces.Ports.User;
 using App.Objects.User.DTOs.Output.Response;
-using App.Shared.Query;
-using App.Shared.Result;
+using App.Shared.Common.Query;
+using App.Shared.Common.Result;
 using App.UseCases.User.Query.Filter;
 using Cortex.Mediator.Queries;
 

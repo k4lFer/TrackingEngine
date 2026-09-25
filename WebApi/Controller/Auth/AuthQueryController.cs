@@ -1,5 +1,5 @@
 using App.Objects.User.DTOs.Input.Query;
-using App.Shared.Security;
+using App.Shared.Common.Security;
 using App.UseCases.Auth.Query.GetActiveSessions;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authorization;

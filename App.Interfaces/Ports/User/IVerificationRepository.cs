@@ -1,5 +1,5 @@
 using App.Domain.User.Entities;
-using App.Shared.Objects.Enums;
+using App.Shared.Common.Enums;
 
 namespace App.Interfaces.Ports.User;
 

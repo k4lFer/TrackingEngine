@@ -3,9 +3,9 @@ using App.Domain.User.Events;
 using App.Interfaces.Ports;
 using App.Interfaces.Ports.User;
 using App.Objects.User.DTOs.Input.Command;
-using App.Shared.Objects.Enums;
-using App.Shared.Result;
-using App.Shared.Validation;
+using App.Shared.Common.Enums;
+using App.Shared.Common.Result;
+using App.Shared.Common.Validation;
 using Cortex.Mediator;
 using Cortex.Mediator.Commands;
 

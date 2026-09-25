@@ -1,5 +1,5 @@
-﻿using System;
-using App.Shared.Objects.Enums;
+using System;
+using App.Shared.Common.Enums;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
 

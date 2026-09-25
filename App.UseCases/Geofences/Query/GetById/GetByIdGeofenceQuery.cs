@@ -1,5 +1,5 @@
 using App.Objects.Geofences.DTOs.Output.Response;
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Queries;
 
 namespace App.UseCases.Geofences.Query.GetById;

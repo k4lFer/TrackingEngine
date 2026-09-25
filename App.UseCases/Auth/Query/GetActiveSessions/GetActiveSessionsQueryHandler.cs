@@ -1,9 +1,9 @@
 using System.Net;
 using App.Interfaces.Ports.User;
 using App.Objects.User.DTOs.Output.Response;
-using App.Shared.Query;
-using App.Shared.Result;
-using App.Shared.Security;
+using App.Shared.Common.Query;
+using App.Shared.Common.Result;
+using App.Shared.Common.Security;
 using App.UseCases.Auth.Filter;
 using Cortex.Mediator.Queries;
 

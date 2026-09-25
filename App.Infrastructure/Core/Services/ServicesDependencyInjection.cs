@@ -5,7 +5,7 @@ using App.Infrastructure.Core.Services.Security;
 using App.Interfaces.Ports.Auth;
 using App.Interfaces.Ports.Emails;
 using App.Interfaces.Ports.User;
-using App.Shared.Security;
+using App.Shared.Common.Security;
 using Cortex.Mediator.Notifications;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

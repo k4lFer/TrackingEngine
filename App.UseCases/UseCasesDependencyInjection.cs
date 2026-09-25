@@ -1,5 +1,5 @@
-﻿using App.Interfaces.Ports.Tracking;
-using App.Shared.Validation;
+using App.Interfaces.Ports.Tracking;
+using App.Shared.Common.Validation;
 using Cortex.Mediator.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,4 +1,4 @@
-using App.Shared.Security;
+using App.Shared.Common.Security;
 using App.UseCases.User.Query.MyProfile;
 using Cortex.Mediator;
 using Microsoft.AspNetCore.Authorization;

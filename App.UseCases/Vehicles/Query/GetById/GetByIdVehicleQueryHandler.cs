@@ -2,7 +2,7 @@ using System.Net;
 using App.Interfaces.Ports.Devices;
 using App.Interfaces.Ports.Vehicles;
 using App.Objects.Vehicles.DTOs.Output.Response;
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Queries;
 
 namespace App.UseCases.Vehicles.Query.GetById;

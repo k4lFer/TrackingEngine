@@ -1,8 +1,8 @@
 using System.Net;
 using App.Interfaces.Ports.Routes;
 using App.Objects.Routes.DTOs.Output.Response;
-using App.Shared.Geometry;
-using App.Shared.Result;
+using App.Shared.Utils.Geometry;
+using App.Shared.Common.Result;
 using App.UseCases.Routes.Common;
 using Cortex.Mediator.Commands;
 

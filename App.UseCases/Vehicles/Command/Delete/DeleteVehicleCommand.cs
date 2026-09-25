@@ -1,5 +1,5 @@
 using App.Objects.Vehicles.DTOs.Output.Response;
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Vehicles.Command.Delete;

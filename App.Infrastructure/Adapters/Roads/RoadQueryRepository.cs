@@ -2,8 +2,8 @@ using App.Domain.Routes.Entities;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Interfaces.Ports.Roads;
 using App.Objects.Roads.DTOs.Output.Response;
-using App.Shared.Geometry;
-using App.Shared.Query;
+using App.Shared.Utils.Geometry;
+using App.Shared.Common.Query;
 using Microsoft.EntityFrameworkCore;
 
 namespace App.Infrastructure.Adapters.Roads;

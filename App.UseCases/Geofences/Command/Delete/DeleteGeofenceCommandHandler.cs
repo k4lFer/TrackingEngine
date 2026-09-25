@@ -1,8 +1,8 @@
 using System.Net;
 using App.Interfaces.Ports.Geofences;
 using App.Objects.Geofences.DTOs.Output.Response;
-using App.Shared.Geometry;
-using App.Shared.Result;
+using App.Shared.Utils.Geometry;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Geofences.Command.Delete;

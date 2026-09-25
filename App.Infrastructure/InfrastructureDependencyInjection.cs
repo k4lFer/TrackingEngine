@@ -2,7 +2,7 @@ using App.Infrastructure.Adapters;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Infrastructure.Core.DataBaseContext.Interceptors;
 using App.Infrastructure.Core.Services;
-using App.Shared.Objects.Enums;
+using App.Shared.Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

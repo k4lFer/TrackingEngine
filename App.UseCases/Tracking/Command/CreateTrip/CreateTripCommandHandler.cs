@@ -6,7 +6,7 @@ using App.Interfaces.Ports.Routes;
 using App.Interfaces.Ports.Tracking;
 using App.Interfaces.Ports.Vehicles;
 using App.Objects.Tracking.DTOs.Output.Response;
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Tracking.Command.CreateTrip;

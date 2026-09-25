@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using App.Infrastructure.Core.DataBaseContext.Audit;
 using App.Infrastructure.Core.DataBaseContext.Connection;
-using App.Shared.Domain;
+using App.Shared.Common.Domain;
 using Cortex.Mediator;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

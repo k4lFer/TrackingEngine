@@ -1,9 +1,9 @@
 using System.Net.Http.Json;
 using System.Text.Json.Nodes;
 using App.Interfaces.Ports.Routes;
-using App.Shared.Geometry;
-using App.Shared.Objects.Enums;
-using App.Shared.Routing;
+using App.Shared.Utils.Geometry;
+using App.Shared.Common.Enums;
+using App.Shared.Common.Routing;
 
 namespace App.Infrastructure.Adapters.Routes;
 

@@ -1,4 +1,4 @@
-﻿using App.Shared.Domain;
+using App.Shared.Common.Domain;
 using NetTopologySuite.Geometries;
 
 namespace App.Domain.Tracking.Entities;

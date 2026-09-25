@@ -1,4 +1,4 @@
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Auth.Command.RevokeAllSessions;

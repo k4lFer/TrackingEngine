@@ -1,7 +1,7 @@
 using System.Net;
 using App.Interfaces.Ports;
 using App.Interfaces.Ports.User;
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Auth.Command.RevokeSession;

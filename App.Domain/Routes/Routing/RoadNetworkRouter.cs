@@ -1,6 +1,6 @@
 using App.Domain.Routes.Entities;
-using App.Shared.Geometry;
-using App.Shared.Routing;
+using App.Shared.Utils.Geometry;
+using App.Shared.Common.Routing;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 

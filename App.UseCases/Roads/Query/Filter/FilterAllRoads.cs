@@ -1,5 +1,5 @@
 using App.Objects.Roads.DTOs.Output.Response;
-using App.Shared.Query;
+using App.Shared.Common.Query;
 
 namespace App.UseCases.Roads.Query.Filter;
 

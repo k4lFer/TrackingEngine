@@ -1,7 +1,7 @@
 using System.Net;
 using App.Interfaces.Ports.Materials;
 using App.Objects.Materials.DTOs.Output.Response;
-using App.Shared.Result;
+using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
 
 namespace App.UseCases.Materials.Command.Update;

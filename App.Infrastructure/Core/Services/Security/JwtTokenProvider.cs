@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using App.Shared.Objects.Enums;
-using App.Shared.Security;
+using App.Shared.Common.Enums;
+using App.Shared.Common.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 

@@ -1,7 +1,7 @@
 using App.Domain.User.Entities;
 using App.Interfaces.Ports.User;
-using App.Shared.Objects.Enums;
-using App.Shared.Security;
+using App.Shared.Common.Enums;
+using App.Shared.Common.Security;
 
 namespace App.Infrastructure.Core.Services.Security;
 

@@ -1,5 +1,5 @@
 using App.Objects.Routes.DTOs.Output.Response;
-using App.Shared.Query;
+using App.Shared.Common.Query;
 
 namespace App.Interfaces.Ports.Routes;
 

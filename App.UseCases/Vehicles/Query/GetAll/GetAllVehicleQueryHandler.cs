@@ -1,7 +1,7 @@
 using App.Interfaces.Ports.Vehicles;
 using App.Objects.Vehicles.DTOs.Output.Response;
-using App.Shared.Query;
-using App.Shared.Result;
+using App.Shared.Common.Query;
+using App.Shared.Common.Result;
 using App.UseCases.Vehicles.Query.Filter;
 using Cortex.Mediator.Queries;
 
