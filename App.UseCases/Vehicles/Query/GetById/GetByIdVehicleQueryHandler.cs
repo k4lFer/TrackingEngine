@@ -33,6 +33,7 @@ public class GetByIdVehicleQueryHandler : IQueryHandler<GetByIdVehicleQuery, Out
             device?.Identifier, device is null ? null : (int?)device.Kind, device?.Model,
             vehicle.CurrentState?.State.ToString() ?? "Offline",
             vehicle.CurrentState?.LastGeom?.Y, vehicle.CurrentState?.LastGeom?.X,
-            vehicle.CurrentState?.LastReceivedAt, vehicle.CurrentState?.ActiveTripId));
+            vehicle.CurrentState?.LastReceivedAt, vehicle.CurrentState?.ActiveTripId,
+            vehicle.CurrentState?.StoppedSince));
     }
 }

@@ -1,3 +1,4 @@
+﻿using App.Domain.Geofences.Entities;
 using App.Domain.Tracking.Entities;
 using App.Domain.Vehicles.Entities;
 using App.Interfaces.Ports;
@@ -9,8 +10,10 @@ using App.Objects.Tracking.DTOs.Input.Command;
 using App.Objects.Tracking.DTOs.Output.Response;
 using App.Shared.Utils.Geometry;
 using App.Shared.Common.Enums;
+using App.Shared.Common.Gps;
 using App.Shared.Common.Result;
 using Cortex.Mediator.Commands;
+using Microsoft.Extensions.Options;
 using NetTopologySuite;
 using NetTopologySuite.Geometries;
 
@@ -28,19 +31,22 @@ public class ReportPositionCommandHandler : ICommandHandler<ReportPositionComman
     private readonly IGeofenceRepository _geofenceRepository;
     private readonly IRouteRepository _routeRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IOptions<GpsRealtimeOptions> _gpsOptions;
 
     public ReportPositionCommandHandler(
         ITrackingWriteRepository trackingWrite,
         IVehicleRepository vehicleRepository,
         IGeofenceRepository geofenceRepository,
         IRouteRepository routeRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IOptions<GpsRealtimeOptions> gpsOptions)
     {
         _trackingWrite = trackingWrite;
         _vehicleRepository = vehicleRepository;
         _geofenceRepository = geofenceRepository;
         _routeRepository = routeRepository;
         _unitOfWork = unitOfWork;
+        _gpsOptions = gpsOptions;
     }
 
     public async Task<OutputPort<PositionResponse>> Handle(ReportPositionCommand command, CancellationToken cancellationToken)
@@ -114,7 +120,13 @@ public class ReportPositionCommandHandler : ICommandHandler<ReportPositionComman
         }
 
         var speed = dto.SpeedKmh ?? 0;
+        var previousState = state.State;
+        // ReportPosition limpia StoppedSince al salir de Detenido: hay que capturarlo antes.
+        var previousStoppedSince = state.StoppedSince;
         state.ReportPosition(point, speed < 3 ? VehicleState.Detenido : VehicleState.EnRuta, dto.RecordedAt);
+        var isStateTransition = previousState != state.State;
+
+        HandleLongStopEvent(vehicle, activeTrip, geofence, point, state, previousState, previousStoppedSince, isStateTransition);
 
         // Sobrevelocidad respecto al límite de la zona actual, con histeresis:
         // la alerta se emite al cruzar el límite hacia arriba y se normaliza al bajar.
@@ -155,6 +167,51 @@ public class ReportPositionCommandHandler : ICommandHandler<ReportPositionComman
             data: new PositionResponse(position.Id, vehicle.Id, dto.RecordedAt,
                 dto.Latitude, dto.Longitude, dto.SpeedKmh, true, null),
             message: "Posición reportada correctamente.");
+    }
+
+    /// <summary>
+    /// Registra el episodio de parada larga: se abre al superar el umbral y se cierra
+    /// cuando el vehículo vuelve a moverse. Ambos eventos llevan la geocerca y la
+    /// duración, que es lo que los hace accionables.
+    /// </summary>
+    private void HandleLongStopEvent(
+        TVehicle vehicle,
+        TTrip? activeTrip,
+        TGeofence? geofence,
+        Point point,
+        TVehicleCurrentState state,
+        VehicleState previousState,
+        DateTime? previousStoppedSince,
+        bool isStateTransition)
+    {
+        if (isStateTransition && previousState == VehicleState.Detenido)
+        {
+            var seconds = previousStoppedSince is null
+                ? 0
+                : (int)(DateTime.UtcNow - previousStoppedSince.Value).TotalSeconds;
+
+            _trackingWrite.Add(TTrackingEvent.Create(
+                vehicle.Id, activeTrip?.Id, TrackingEventType.LongStopEnded,
+                EventSeverity.Info, geofence?.Id, point, BuildLongStopPayload(geofence, seconds)));
+            return;
+        }
+
+        if (state.State != VehicleState.Detenido || state.StoppedSince is null) return;
+        if (state.LongStopNotifiedAt is not null) return;
+
+        var stoppedSeconds = (int)(DateTime.UtcNow - state.StoppedSince.Value).TotalSeconds;
+        if (stoppedSeconds < _gpsOptions.Value.LongStopThresholdSeconds) return;
+
+        state.MarkLongStopNotified();
+        _trackingWrite.Add(TTrackingEvent.Create(
+            vehicle.Id, activeTrip?.Id, TrackingEventType.LongStopDetected,
+            EventSeverity.Info, geofence?.Id, point, BuildLongStopPayload(geofence, stoppedSeconds)));
+    }
+
+    private static string BuildLongStopPayload(TGeofence? geofence, int durationSeconds)
+    {
+        var name = geofence?.Name;
+        return $"{{\"geofence\":{(name is null ? "null" : $"\"{name}\"")},\"duration_s\":{durationSeconds}}}";
     }
 
     private async Task HandleRouteDeviationAsync(

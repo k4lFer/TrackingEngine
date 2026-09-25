@@ -14,5 +14,6 @@ public record VehicleStatusResponse(
     double? LastLat,
     double? LastLon,
     DateTime? LastReportedAt,
-    Guid? ActiveTripId
+    Guid? ActiveTripId,
+    DateTime? StoppedSince
 );

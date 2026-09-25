@@ -36,7 +36,8 @@ public class VehicleQueryRepository : BaseRepository<TVehicle>, IVehicleQueryRep
                 v.CurrentState != null && v.CurrentState.LastGeom != null ? v.CurrentState.LastGeom.Y : null,
                 v.CurrentState != null && v.CurrentState.LastGeom != null ? v.CurrentState.LastGeom.X : null,
                 v.CurrentState != null ? v.CurrentState.LastReceivedAt : v.LastReportedAt,
-                v.CurrentState != null && v.CurrentState.ActiveTripId != null ? v.CurrentState.ActiveTripId : null))
+                v.CurrentState != null && v.CurrentState.ActiveTripId != null ? v.CurrentState.ActiveTripId : null,
+                v.CurrentState != null ? v.CurrentState.StoppedSince : null))
             .ToListAsync(cancellationToken);
 
         IQueryable<VehicleStatusResponse> query = all.AsQueryable();

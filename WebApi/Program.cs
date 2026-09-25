@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using WebApi.Scalar;
 using App.Shared.Common.Security;
+using App.Shared.Common.Gps;
 using WebApi;
 using WebApi.Services;
 using WebApi.Middleware;
@@ -32,6 +33,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.Configure<GpsRealtimeOptions>(builder.Configuration.GetSection("GpsRealtime"));
 builder.Services.AddUseCasesDi();
 
 builder.Services.AddHostedService<GpsTcpGatewayHostedService>();

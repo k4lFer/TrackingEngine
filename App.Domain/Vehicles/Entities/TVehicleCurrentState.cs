@@ -24,6 +24,12 @@ public class TVehicleCurrentState : BaseDomain
 
     public int OffRouteStreak { get; private set; }
 
+    /// <summary>Momento en que el vehículo entró en Detenido. Se limpia al salir.</summary>
+    public DateTime? StoppedSince { get; private set; }
+
+    /// <summary>Momento en que se ya notificó la parada larga de este episodio. Evita duplicar el evento.</summary>
+    public DateTime? LongStopNotifiedAt { get; private set; }
+
     public DateTime? UpdatedAt { get; private set; }
 
     private TVehicleCurrentState() { }
@@ -36,13 +42,41 @@ public class TVehicleCurrentState : BaseDomain
 
     public void ReportPosition(Point geom, VehicleState state, DateTime reportedAt)
     {
+        var stateChanged = State != state;
+
         LastGeom = geom;
         State = state;
         LastReportedAt = reportedAt;
         LastReceivedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
-        AddDomainEvent(new VehiclePositionReportedEvent(VehicleId, geom, state));
+
+        // El tiempo de parada se mide con el reloj del servidor: RecordedAt viene del
+        // dispositivo (el TK103 solo tiene resolución de 1 segundo) y no es fiable.
+        if (state == VehicleState.Detenido)
+        {
+            if (stateChanged)
+            {
+                StoppedSince = LastReceivedAt;
+                LongStopNotifiedAt = null;
+            }
+        }
+        else if (StoppedSince is not null)
+        {
+            StoppedSince = null;
+            LongStopNotifiedAt = null;
+        }
+
+        // El evento significa "el vehículo cambió de estado", no "llegó una posición".
+        // Emitirlo en cada trama costaba un INSERT en audit_messages más un scope de DI
+        // y un PublishAsync por reflexión en cada commit, sin ningún consumidor.
+        if (stateChanged)
+        {
+            AddDomainEvent(new VehiclePositionReportedEvent(VehicleId, geom, state));
+        }
     }
+
+    /// <summary>Marca que la parada larga del episodio en curso ya fue notificada.</summary>
+    public void MarkLongStopNotified() => LongStopNotifiedAt = DateTime.UtcNow;
 
     public void SetActiveTrip(Guid? tripId)
     {
@@ -92,6 +126,8 @@ public class TVehicleCurrentState : BaseDomain
         LastReceivedAt = null;
         CurrentGeofenceId = null;
         ActiveTripId = null;
+        StoppedSince = null;
+        LongStopNotifiedAt = null;
         UpdatedAt = DateTime.UtcNow;
     }
 }
