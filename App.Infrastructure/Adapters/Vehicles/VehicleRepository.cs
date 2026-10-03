@@ -88,4 +88,19 @@ public class VehicleRepository : BaseRepository<TVehicle>, IVehicleRepository
         _dbc.Vehicles.Remove(vehicle);
         await Task.CompletedTask;
     }
+
+    /// <summary>
+    /// ExecuteUpdateAsync: una sola sentencia UPDATE, sin materializar la entidad,
+    /// sin SaveChanges y sin disparar los interceptores de eventos de dominio.
+    /// </summary>
+    public async Task TouchLastReceivedAsync(Guid vehicleId, DateTime receivedAt, CancellationToken cancellationToken = default)
+    {
+        await _dbc.VehicleCurrentStates
+            .Where(s => s.VehicleId == vehicleId)
+            .ExecuteUpdateAsync(
+                setters => setters
+                    .SetProperty(s => s.LastReceivedAt, receivedAt)
+                    .SetProperty(s => s.UpdatedAt, receivedAt),
+                cancellationToken);
+    }
 }

@@ -167,10 +167,16 @@ public class GpsIngestController : ControllerBase
             _logger.LogInformation("⚙️ [PROCESANDO] Enviando trampa al servicio de ingesta...");
             var result = await _gps.HandleAsync("http", Encoding.UTF8.GetBytes(payload), cancellationToken);
             
-            _logger.LogInformation("✅ [PROCESADO] Resultado de Ingesta -> Decoder: {Decoder} | Aceptado: {Accepted} | Omitido: {Skipped}", 
-                result.Decoder, result.Accepted, result.Skipped);
+            _logger.LogInformation("✅ [PROCESADO] Resultado de Ingesta -> Decoder: {Decoder} | Aceptado: {Accepted} | Omitido: {Skipped} | Suprimido: {Suppressed}", 
+                result.Decoder, result.Accepted, result.Skipped, result.Suppressed);
 
-            return Ok(new { decoder = result.Decoder, accepted = result.Accepted, skipped = result.Skipped });
+            return Ok(new
+            {
+                decoder = result.Decoder,
+                accepted = result.Accepted,
+                skipped = result.Skipped,
+                suppressed = result.Suppressed,
+            });
         }
         catch (Exception ex)
         {

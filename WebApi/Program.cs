@@ -3,6 +3,7 @@ using App.Infrastructure.Adapters.Notifications;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Infrastructure.Core.DataBaseContext.Seed;
 using App.UseCases;
+using WebApi.Services;
 using WebApi.Config;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -37,6 +38,7 @@ builder.Services.Configure<GpsRealtimeOptions>(builder.Configuration.GetSection(
 builder.Services.AddUseCasesDi();
 
 builder.Services.AddHostedService<GpsTcpGatewayHostedService>();
+builder.Services.AddHostedService<VehicleStaleMonitorHostedService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

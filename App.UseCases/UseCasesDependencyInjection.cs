@@ -22,6 +22,12 @@ public static class UseCasesDependencyInjection
         // ── Ingesta GPS genérica: un decodificador por protocolo. ─────────────
         services.AddSingleton<IGpsDeviceDecoder, App.UseCases.Gps.Decoders.OsmAndQueryDecoder>();
         services.AddSingleton<IGpsDeviceDecoder, App.UseCases.Gps.Decoders.Tk103FrameDecoder>();
+
+        // El filtro DEBE ser singleton: guarda el último punto de cada vehículo, y
+        // el gateway TCP crea un scope por trama, así que con lifetime Scoped se
+        // reiniciaría en cada envío y no filtraría nada.
+        services.AddSingleton<IVehicleRealtimeGate, App.UseCases.Gps.VehicleRealtimeGate>();
+
         services.AddScoped<Gps.GpsIngestionService>();
 
         return services;

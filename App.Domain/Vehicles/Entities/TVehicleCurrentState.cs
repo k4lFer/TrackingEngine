@@ -15,21 +15,11 @@ public class TVehicleCurrentState : BaseDomain
     public Guid? CurrentGeofenceId { get; private set; }
     public Guid? ActiveTripId { get; private set; }
     public TVehicle? Vehicle { get; private set; }
-
-    /// <summary>Inicio del episodio de sobrevelocidad (histeresis: solo se emite al cruzar el límite hacia arriba).</summary>
     public DateTime? OverSpeedSince { get; private set; }
-
-    /// <summary>Inicio del episodio de desvío de ruta (se exige un mínimo de reportes consecutivos fuera de ruta).</summary>
     public DateTime? OffRouteSince { get; private set; }
-
     public int OffRouteStreak { get; private set; }
-
-    /// <summary>Momento en que el vehículo entró en Detenido. Se limpia al salir.</summary>
     public DateTime? StoppedSince { get; private set; }
-
-    /// <summary>Momento en que se ya notificó la parada larga de este episodio. Evita duplicar el evento.</summary>
     public DateTime? LongStopNotifiedAt { get; private set; }
-
     public DateTime? UpdatedAt { get; private set; }
 
     private TVehicleCurrentState() { }
@@ -50,8 +40,6 @@ public class TVehicleCurrentState : BaseDomain
         LastReceivedAt = DateTime.UtcNow;
         UpdatedAt = DateTime.UtcNow;
 
-        // El tiempo de parada se mide con el reloj del servidor: RecordedAt viene del
-        // dispositivo (el TK103 solo tiene resolución de 1 segundo) y no es fiable.
         if (state == VehicleState.Detenido)
         {
             if (stateChanged)
@@ -66,16 +54,12 @@ public class TVehicleCurrentState : BaseDomain
             LongStopNotifiedAt = null;
         }
 
-        // El evento significa "el vehículo cambió de estado", no "llegó una posición".
-        // Emitirlo en cada trama costaba un INSERT en audit_messages más un scope de DI
-        // y un PublishAsync por reflexión en cada commit, sin ningún consumidor.
         if (stateChanged)
         {
             AddDomainEvent(new VehiclePositionReportedEvent(VehicleId, geom, state));
         }
     }
 
-    /// <summary>Marca que la parada larga del episodio en curso ya fue notificada.</summary>
     public void MarkLongStopNotified() => LongStopNotifiedAt = DateTime.UtcNow;
 
     public void SetActiveTrip(Guid? tripId)
@@ -117,7 +101,6 @@ public class TVehicleCurrentState : BaseDomain
         UpdatedAt = DateTime.UtcNow;
     }
 
-    /// <summary>Apaga el estado del vehículo: Offline, sin posición, sin viaje ni geofence activos.</summary>
     public void ResetToOffline()
     {
         State = VehicleState.Offline;

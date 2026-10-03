@@ -1,4 +1,5 @@
-﻿using App.Domain.Geofences.Entities;
+﻿using System.Text.Json;
+using App.Domain.Geofences.Entities;
 using App.Domain.Tracking.Entities;
 using App.Domain.Vehicles.Entities;
 using App.Interfaces.Ports;
@@ -123,10 +124,21 @@ public class ReportPositionCommandHandler : ICommandHandler<ReportPositionComman
         var previousState = state.State;
         // ReportPosition limpia StoppedSince al salir de Detenido: hay que capturarlo antes.
         var previousStoppedSince = state.StoppedSince;
-        state.ReportPosition(point, speed < 3 ? VehicleState.Detenido : VehicleState.EnRuta, dto.RecordedAt);
+        // Y sobrescribe LastReceivedAt con la hora actual, que es justo el valor que
+        // necesita el evento de reconexión para decir cuánto duró el corte. Sin
+        // capturarlo antes, offline_for_s saldría siempre 0.
+        var previousLastReceivedAt = state.LastReceivedAt;
+
+        // La geocerca ya se consultó más arriba (línea 96), así que resolver el estado
+        // no cuesta una query extra. El umbral de velocidad es el mismo que usa el
+        // filtro de tramas: si divergieran, el gate suprimiría tramas creyendo que el
+        // vehículo se mueve y viceversa.
+        var resolvedState = GpsStateResolver.Resolve(dto.SpeedKmh, geofence?.Kind, _gpsOptions.Value.StopSpeedKmh);
+        state.ReportPosition(point, resolvedState, dto.RecordedAt);
         var isStateTransition = previousState != state.State;
 
         HandleLongStopEvent(vehicle, activeTrip, geofence, point, state, previousState, previousStoppedSince, isStateTransition);
+        HandleGpsConnectionRestored(vehicle, activeTrip, geofence, point, previousLastReceivedAt, previousState, isStateTransition, isNewState);
 
         // Sobrevelocidad respecto al límite de la zona actual, con histeresis:
         // la alerta se emite al cruzar el límite hacia arriba y se normaliza al bajar.
@@ -208,10 +220,52 @@ public class ReportPositionCommandHandler : ICommandHandler<ReportPositionComman
             EventSeverity.Info, geofence?.Id, point, BuildLongStopPayload(geofence, stoppedSeconds)));
     }
 
+    /// <summary>
+    /// Emite GpsConnectionRestored cuando el vehículo vuelve de Offline. El
+    /// GpsConnectionLost lo pone el worker de vehículos sin señal, que es el único que
+    /// sabe cuándo se agotó el silencio; aquí solo se cierra el par.
+    ///
+    /// Sin esto el vehículo reaparece en el tablero sin dejar rastro de que estuvo
+    /// desconectado, y el tiempo fuera de línea solo se puede inferir comparando las
+    /// columnas last_received_at.
+    ///
+    /// La carga del payload sale del propio estado Offline, no de un reloj: el worker
+    /// borra StoppedSince al marcar Offline y no toca LastReceivedAt, así que la
+    /// última trama received sigue siendo la anterior al corte.
+    /// </summary>
+    private void HandleGpsConnectionRestored(
+        TVehicle vehicle,
+        TTrip? activeTrip,
+        TGeofence? geofence,
+        Point point,
+        DateTime? previousLastReceivedAt,
+        VehicleState previousState,
+        bool isStateTransition,
+        bool isNewState)
+    {
+        if (isNewState) return;
+        if (!isStateTransition || previousState != VehicleState.Offline) return;
+
+        var payload = JsonSerializer.Serialize(new
+        {
+            last_received_at = previousLastReceivedAt,
+            offline_for_s = previousLastReceivedAt is null
+                ? (int?)null
+                : (int)(DateTime.UtcNow - previousLastReceivedAt.Value).TotalSeconds,
+            offline_after_s = (int)_gpsOptions.Value.OfflineThresholdSeconds,
+        });
+
+        _trackingWrite.Add(TTrackingEvent.Create(
+            vehicle.Id, activeTrip?.Id, TrackingEventType.GpsConnectionRestored,
+            EventSeverity.Info, geofence?.Id, point, payload));
+    }
+
     private static string BuildLongStopPayload(TGeofence? geofence, int durationSeconds)
     {
-        var name = geofence?.Name;
-        return $"{{\"geofence\":{(name is null ? "null" : $"\"{name}\"")},\"duration_s\":{durationSeconds}}}";
+        // JsonSerializer y no interpolación: un nombre de geocerca con comilla o
+        // barra invertida produciría un payload inválido y el evento no se podría leer.
+        var name = geofence is null ? "null" : JsonSerializer.Serialize(geofence.Name);
+        return $"{{\"geofence\":{name},\"duration_s\":{durationSeconds}}}";
     }
 
     private async Task HandleRouteDeviationAsync(

@@ -91,7 +91,7 @@ public sealed class GpsTcpGatewayHostedService : BackgroundService
                         using var scope = _scopeFactory.CreateScope();
                         var gps = scope.ServiceProvider.GetRequiredService<GpsIngestionService>();
                         var result = await gps.HandleAsync("tcp", frame, stoppingToken);
-                        _logger.LogInformation("[gps:tcp] decoder={Decoder} aceptadas={Accepted} omitidas={Skipped}", result.Decoder, result.Accepted, result.Skipped);
+                        _logger.LogInformation("[gps:tcp] decoder={Decoder} aceptadas={Accepted} omitidas={Skipped} suprimidas={Suppressed}", result.Decoder, result.Accepted, result.Skipped, result.Suppressed);
                     }
                 }
             }
