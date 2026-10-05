@@ -159,7 +159,7 @@ public class GpsIngestController : ControllerBase
         if (string.IsNullOrWhiteSpace(payload))
         {
             _logger.LogWarning("⚠️ [GPS CANCELADO] El payload procesado está completamente vacío. No hay datos para procesar.");
-            return Ok(new { decoder = "none", accepted = false, skipped = true });
+            return Ok(new { decoder = "none", accepted = false, skipped = true, suppressed = 0 });
         }
 
         try
