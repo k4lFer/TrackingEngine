@@ -27,19 +27,13 @@ public class VehicleRepository : BaseRepository<TVehicle>, IVehicleRepository
 
     public async Task<TVehicle?> GetByDeviceIdentifierAsync(string identifier, CancellationToken cancellationToken = default)
     {
-        var vehicleId = await _dbc.Devices
-            .Where(d => d.Identifier == identifier)
-            .Select(d => d.VehicleId)
+        var vehicle = await _dbc.Vehicles
+            .Where(v => _dbc.Devices.Any(d => d.Identifier == identifier && d.VehicleId == v.Id))
+            .Include(v => v.CurrentState)
+            .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (vehicleId is null)
-        {
-            return null;
-        }
-
-        return await _dbc.Vehicles
-            .Include(v => v.CurrentState)
-            .FirstOrDefaultAsync(v => v.Id == vehicleId, cancellationToken);
+        return vehicle;
     }
 
     public async Task<IReadOnlyList<VehicleStatusResponse>> GetAllWithStatusAsync(CancellationToken cancellationToken = default)

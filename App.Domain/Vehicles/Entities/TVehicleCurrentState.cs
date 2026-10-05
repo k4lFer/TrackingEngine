@@ -20,6 +20,7 @@ public class TVehicleCurrentState : BaseDomain
     public int OffRouteStreak { get; private set; }
     public DateTime? StoppedSince { get; private set; }
     public DateTime? LongStopNotifiedAt { get; private set; }
+    public DateTime? StateChangedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
 
     private TVehicleCurrentState() { }
@@ -30,21 +31,33 @@ public class TVehicleCurrentState : BaseDomain
         return st;
     }
 
-    public void ReportPosition(Point geom, VehicleState state, DateTime reportedAt)
+    public bool IsStateChangeSettled(VehicleState candidate, DateTime nowUtc, TimeSpan minDuration)
+        => State == candidate
+           || minDuration <= TimeSpan.Zero
+           || StateChangedAt is null
+           || nowUtc - StateChangedAt.Value >= minDuration;
+
+    public void ReportPosition(Point geom, VehicleState state, DateTime reportedAt, DateTime? nowUtc = null)
     {
+        var now = nowUtc ?? DateTime.UtcNow;
         var stateChanged = State != state;
 
         LastGeom = geom;
         State = state;
         LastReportedAt = reportedAt;
-        LastReceivedAt = DateTime.UtcNow;
-        UpdatedAt = DateTime.UtcNow;
+        LastReceivedAt = now;
+        UpdatedAt = now;
+
+        if (stateChanged)
+        {
+            StateChangedAt = now;
+        }
 
         if (state == VehicleState.Detenido)
         {
             if (stateChanged)
             {
-                StoppedSince = LastReceivedAt;
+                StoppedSince = now;
                 LongStopNotifiedAt = null;
             }
         }
@@ -111,6 +124,7 @@ public class TVehicleCurrentState : BaseDomain
         ActiveTripId = null;
         StoppedSince = null;
         LongStopNotifiedAt = null;
+        StateChangedAt = null;
         UpdatedAt = DateTime.UtcNow;
     }
 }

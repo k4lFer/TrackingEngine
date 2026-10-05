@@ -25,6 +25,7 @@ public class VehicleCurrentStateConfiguration : IEntityTypeConfiguration<TVehicl
         builder.Property(t => t.OffRouteStreak).HasColumnName("off_route_streak").IsRequired();
         builder.Property(t => t.StoppedSince).HasColumnName("stopped_since");
         builder.Property(t => t.LongStopNotifiedAt).HasColumnName("long_stop_notified_at");
+        builder.Property(t => t.StateChangedAt).HasColumnName("state_changed_at");
         builder.Property(t => t.UpdatedAt).HasColumnName("updated_at");
     }
 }

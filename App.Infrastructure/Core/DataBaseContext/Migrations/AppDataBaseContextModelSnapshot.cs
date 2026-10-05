@@ -853,6 +853,10 @@ namespace App.Infrastructure.Core.DataBaseContext.Migrations
                         .HasColumnType("fleet.vehicle_state_enum")
                         .HasColumnName("state");
 
+                    b.Property<DateTime?>("StateChangedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("state_changed_at");
+
                     b.Property<DateTime?>("StoppedSince")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("stopped_since");

@@ -4,14 +4,6 @@ using App.UseCases.Gps;
 
 namespace WebApi.Services;
 
-/// <summary>
-/// Gateway TCP genérico para dispositivos GPS (por defecto puerto 8090).
-/// Acepta conexiones de trackers que hablan por socket:
-///  - TK103 sobre GPRS: tramas "*HQ,...,#" y login "##,imei:...,A;" / "imei:...;".
-//  - Cualquier protocolo de texto: la trama se reenvía al servicio de ingesta
-///    (que prueba cada decodificador registrado).
-/// Config: Gps:TcpPort (por defecto 8090) y Gps:Enabled.
-/// </summary>
 public sealed class GpsTcpGatewayHostedService : BackgroundService
 {
     private readonly int _port;
@@ -64,6 +56,8 @@ public sealed class GpsTcpGatewayHostedService : BackgroundService
         }
     }
 
+    private const int MaxBufferBytes = 64 * 1024;
+
     private async Task HandleClientAsync(TcpClient client, CancellationToken stoppingToken)
     {
         using (client)
@@ -81,6 +75,14 @@ public sealed class GpsTcpGatewayHostedService : BackgroundService
 
                     for (var i = 0; i < read; i++) buffer.Add(chunk[i]);
 
+                    if (buffer.Count > MaxBufferBytes)
+                    {
+                        _logger.LogWarning(
+                            "[gps:tcp] conexión descartada: {Bytes} bytes sin separador de trama (límite {Limit}).",
+                            buffer.Count, MaxBufferBytes);
+                        break;
+                    }
+
                     while (TryExtractFrame(buffer, out var frame))
                     {
                         if (await TryHandleTk103HandshakeAsync(client, frame, stoppingToken))
@@ -91,7 +93,8 @@ public sealed class GpsTcpGatewayHostedService : BackgroundService
                         using var scope = _scopeFactory.CreateScope();
                         var gps = scope.ServiceProvider.GetRequiredService<GpsIngestionService>();
                         var result = await gps.HandleAsync("tcp", frame, stoppingToken);
-                        _logger.LogInformation("[gps:tcp] decoder={Decoder} aceptadas={Accepted} omitidas={Skipped} suprimidas={Suppressed}", result.Decoder, result.Accepted, result.Skipped, result.Suppressed);
+
+                        _logger.LogDebug("[gps:tcp] decoder={Decoder} aceptadas={Accepted} omitidas={Skipped} suprimidas={Suppressed}", result.Decoder, result.Accepted, result.Skipped, result.Suppressed);
                     }
                 }
             }
@@ -102,10 +105,6 @@ public sealed class GpsTcpGatewayHostedService : BackgroundService
         }
     }
 
-    /// <summary>
-    /// Extrae trama del buffer: termina en '#' (frame de posición TK103) o en
-    /// ';' (mensajes de login/heartbeat TK103).
-    /// </summary>
     private static bool TryExtractFrame(List<byte> buffer, out byte[] frame)
     {
         frame = [];
