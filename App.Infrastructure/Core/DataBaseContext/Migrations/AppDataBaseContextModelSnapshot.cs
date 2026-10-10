@@ -171,6 +171,89 @@ namespace App.Infrastructure.Core.DataBaseContext.Migrations
                     b.ToTable("notifications", "notifications");
                 });
 
+            modelBuilder.Entity("App.Domain.Positions.Entities.TGpsPositionStaging", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Decoder")
+                        .HasColumnType("text")
+                        .HasColumnName("decoder");
+
+                    b.Property<string>("DeviceId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("device_id");
+
+                    b.Property<DateTime>("DeviceTimestamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("device_timestamp");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text")
+                        .HasColumnName("error");
+
+                    b.Property<double?>("Hdop")
+                        .HasColumnType("double precision")
+                        .HasColumnName("hdop");
+
+                    b.Property<double?>("HeadingDeg")
+                        .HasColumnType("double precision")
+                        .HasColumnName("heading_deg");
+
+                    b.Property<bool?>("Ignition")
+                        .HasColumnType("boolean")
+                        .HasColumnName("ignition");
+
+                    b.Property<double>("Latitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("double precision")
+                        .HasColumnName("latitude");
+
+                    b.Property<double>("Longitude")
+                        .HasPrecision(9, 6)
+                        .HasColumnType("double precision")
+                        .HasColumnName("longitude");
+
+                    b.Property<bool>("Processed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("processed");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("processed_at");
+
+                    b.Property<DateTime>("ReceivedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("received_at");
+
+                    b.Property<int?>("Satellites")
+                        .HasColumnType("integer")
+                        .HasColumnName("satellites");
+
+                    b.Property<double?>("SpeedKmh")
+                        .HasColumnType("double precision")
+                        .HasColumnName("speed_kmh");
+
+                    b.Property<string>("Transport")
+                        .HasColumnType("text")
+                        .HasColumnName("transport");
+
+                    b.Property<Guid?>("VehicleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("vehicle_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceivedAt")
+                        .HasDatabaseName("ix_gps_positions_staging_received_at_unprocessed")
+                        .HasFilter("\"processed\" = false");
+
+                    b.ToTable("gps_positions_staging", "tracking");
+                });
+
             modelBuilder.Entity("App.Domain.Routes.Entities.TMineRoad", b =>
                 {
                     b.Property<Guid>("Id")
@@ -346,6 +429,8 @@ namespace App.Infrastructure.Core.DataBaseContext.Migrations
                     b.HasIndex("RecordedAt");
 
                     b.HasIndex("VehicleId");
+
+                    b.HasIndex("VehicleId", "RecordedAt");
 
                     b.ToTable("gps_positions", "tracking");
                 });

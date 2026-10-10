@@ -1,4 +1,5 @@
 using System.Text;
+using App.Objects.Gps.DTOs.Output.Response;
 using App.UseCases.Gps;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

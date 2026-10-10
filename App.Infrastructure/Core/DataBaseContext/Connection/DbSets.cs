@@ -6,6 +6,7 @@ using App.Domain.Routes.Entities;
 using App.Domain.Tracking.Entities;
 using App.Domain.User.Entities;
 using App.Domain.Vehicles.Entities;
+using App.Domain.Positions.Entities;
 using App.Infrastructure.Core.DataBaseContext.Audit;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,7 @@ public partial class AppDataBaseContext
     public DbSet<TTrip> Trips { get; set; }
     public DbSet<TTrackingEvent> TrackingEvents { get; set; }
     public DbSet<TGpsPosition> GpsPositions { get; set; }
+    public DbSet<TGpsPositionStaging> GpsPositionsStaging { get; set; }
     public DbSet<TVehicle> Vehicles { get; set; }
     public DbSet<TVehicleCurrentState> VehicleCurrentStates { get; set; }
     public DbSet<TDevice> Devices { get; set; }

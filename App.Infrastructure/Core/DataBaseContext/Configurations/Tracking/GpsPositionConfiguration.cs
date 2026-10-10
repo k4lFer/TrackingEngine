@@ -35,6 +35,7 @@ public class GpsPositionConfiguration : IEntityTypeConfiguration<TGpsPosition>
 
         builder.HasIndex(p => p.VehicleId);
         builder.HasIndex(p => p.RecordedAt);
+        builder.HasIndex(p => new { p.VehicleId, p.RecordedAt });
 
         builder.HasOne<TVehicle>()
             .WithMany()

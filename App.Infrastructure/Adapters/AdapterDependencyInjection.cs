@@ -45,6 +45,7 @@ public static class AdapterDependencyInjection
         services.AddScoped<IRouteQueryRepository, RouteQueryRepository>();
         services.AddScoped<ITrackingReadRepository, TrackingRepository>();
         services.AddScoped<ITrackingWriteRepository, TrackingRepository>();
+        services.AddScoped<IGpsStagingRepository, GpsStagingRepository>();
         services.AddSingleton<ITrackingNotifier, SignalRTrackingNotifier>();
 
         var valhalla = configuration.GetSection("Routing:Valhalla").Get<ValhallaOptions>() ?? new ValhallaOptions();

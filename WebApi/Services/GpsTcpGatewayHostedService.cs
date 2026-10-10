@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using System.Text;
+using App.Objects.Gps.DTOs.Output.Response;
 using App.UseCases.Gps;
 
 namespace WebApi.Services;

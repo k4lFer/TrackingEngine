@@ -1,4 +1,4 @@
-using App.Domain.Vehicles.Entities;
+﻿using App.Domain.Vehicles.Entities;
 using App.Infrastructure.Adapters;
 using App.Interfaces.Ports.Vehicles;
 using App.Objects.Vehicles.DTOs.Output.Response;
@@ -28,7 +28,10 @@ public class VehicleRepository : BaseRepository<TVehicle>, IVehicleRepository
     public async Task<TVehicle?> GetByDeviceIdentifierAsync(string identifier, CancellationToken cancellationToken = default)
     {
         var vehicle = await _dbc.Vehicles
-            .Where(v => _dbc.Devices.Any(d => d.Identifier == identifier && d.VehicleId == v.Id))
+            .Join(_dbc.Devices.Where(d => d.Identifier == identifier),
+                  v => v.Id,
+                  d => d.VehicleId,
+                  (v, d) => v)
             .Include(v => v.CurrentState)
             .AsNoTracking()
             .FirstOrDefaultAsync(cancellationToken);
@@ -87,6 +90,29 @@ public class VehicleRepository : BaseRepository<TVehicle>, IVehicleRepository
     /// ExecuteUpdateAsync: una sola sentencia UPDATE, sin materializar la entidad,
     /// sin SaveChanges y sin disparar los interceptores de eventos de dominio.
     /// </summary>
+    public async Task<VehicleIngestSnapshot?> GetIngestSnapshotByDeviceIdentifierAsync(string identifier, CancellationToken cancellationToken = default)
+    {
+        var snap = await _dbc.Vehicles
+            .Join(_dbc.Devices.Where(d => d.Identifier == identifier),
+                  v => v.Id,
+                  d => d.VehicleId,
+                  (v, d) => new VehicleIngestSnapshot(
+                      v.Id,
+                      v.Code,
+                      v.CurrentState != null ? v.CurrentState.ActiveTripId : null))
+            .AsNoTracking()
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return snap;
+    }
+
+    public async Task<IReadOnlyList<(string Identifier, Guid VehicleId)>> GetAllDeviceVehiclePairsAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dbc.Devices
+            .Where(d => d.VehicleId != null)
+            .Select(d => new ValueTuple<string, Guid>(d.Identifier, d.VehicleId!.Value))
+            .ToListAsync(cancellationToken);
+    }
     public async Task TouchLastReceivedAsync(Guid vehicleId, DateTime receivedAt, CancellationToken cancellationToken = default)
     {
         await _dbc.VehicleCurrentStates

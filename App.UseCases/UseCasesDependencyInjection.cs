@@ -2,6 +2,11 @@ using App.Interfaces.Ports.Tracking;
 using App.Shared.Common.Validation;
 using Cortex.Mediator.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using App.UseCases.Tracking.Services;
+using App.UseCases.Gps.Batching;
+using App.UseCases.Gps.Caching;
+using App.UseCases.Gps;
+using App.UseCases.Gps.Decoders;
 
 namespace App.UseCases;
 
@@ -20,15 +25,20 @@ public static class UseCasesDependencyInjection
             .WithScopedLifetime());
 
         // ── Ingesta GPS genérica: un decodificador por protocolo. ─────────────
-        services.AddSingleton<IGpsDeviceDecoder, App.UseCases.Gps.Decoders.OsmAndQueryDecoder>();
-        services.AddSingleton<IGpsDeviceDecoder, App.UseCases.Gps.Decoders.Tk103FrameDecoder>();
+        services.AddSingleton<IGpsDeviceDecoder, OsmAndQueryDecoder>();
+        services.AddSingleton<IGpsDeviceDecoder, Tk103FrameDecoder>();
 
-        // El filtro DEBE ser singleton: guarda el último punto de cada vehículo, y
-        // el gateway TCP crea un scope por trama, así que con lifetime Scoped se
-        // reiniciaría en cada envío y no filtraría nada.
-        services.AddSingleton<IVehicleRealtimeGate, App.UseCases.Gps.VehicleRealtimeGate>();
+        services.AddSingleton<IVehicleRealtimeGate, VehicleRealtimeGate>();
 
-        services.AddScoped<Gps.GpsIngestionService>();
+        services.AddSingleton<IGpsIngestCache, GpsIngestCache>();
+        services.AddHostedService<GpsBatchWorker>();
+        // Preheat de una sola pasada; debe arrancar ANTES que GpsTcpGatewayHostedService
+        // para que el pico de reconexión no caiga en cache-miss masivo.
+        services.AddHostedService<App.UseCases.Gps.Warming.GpsVehicleCacheWarmer>();
+
+        services.AddScoped<IPositionProcessor, PositionProcessor>();
+
+        services.AddScoped<GpsIngestionService>();
 
         return services;
     }
