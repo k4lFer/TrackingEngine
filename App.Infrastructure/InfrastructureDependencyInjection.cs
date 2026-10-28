@@ -1,4 +1,5 @@
 using App.Infrastructure.Adapters;
+using App.Infrastructure.Adapters.Messaging.Redis;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Infrastructure.Core.DataBaseContext.Interceptors;
 using App.Infrastructure.Core.Services;
@@ -39,6 +40,7 @@ public static class InfrastructureDependencyInjection
         
         #endregion
         
+        services.AddRedisMessaging(configuration);
         services.AddAdapterDependencies(configuration);
         services.AddCoreServices(configuration);
         

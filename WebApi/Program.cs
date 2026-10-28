@@ -25,7 +25,7 @@ builder.Services.AddSignalR();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendDev", policy =>
-        policy.WithOrigins("http://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "http://localhost", "http://127.0.0.1")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials());
@@ -37,8 +37,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.Configure<GpsRealtimeOptions>(builder.Configuration.GetSection("GpsRealtime"));
 builder.Services.AddUseCasesDi();
 
-builder.Services.AddHostedService<GpsTcpGatewayHostedService>();
 builder.Services.AddHostedService<VehicleStaleMonitorHostedService>();
+builder.Services.AddHostedService<GpsEventConsumerHostedService>();
 
 builder.Services.AddEndpointsApiExplorer();
 
