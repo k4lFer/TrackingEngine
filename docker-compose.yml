@@ -1,4 +1,4 @@
-services:
+﻿services:
   postgres:
     image: postgis/postgis:16-3.4
     container_name: mineraltracking-postgres
@@ -96,7 +96,7 @@ services:
       Redis__MaxLength: "100000"
       ConnectionStrings__Redis: "redis:6379"
     restart: unless-stopped
-    # GPS TCP listener vive EXCLUSIVAMENTE aquí. NO escalar este servicio.
+    # GPS TCP listener vive EXCLUSIVAMENTE aquÃ­. NO escalar este servicio.
 
   frontend:
     build:
