@@ -1,4 +1,5 @@
-using App.Infrastructure;
+﻿using App.Infrastructure;
+using App.Infrastructure.Adapters.Messaging.Redis;
 using App.Infrastructure.Adapters.Notifications;
 using App.Infrastructure.Core.DataBaseContext.Connection;
 using App.Infrastructure.Core.DataBaseContext.Seed;
@@ -34,11 +35,12 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddRedisMessaging(builder.Configuration);
 builder.Services.Configure<GpsRealtimeOptions>(builder.Configuration.GetSection("GpsRealtime"));
 builder.Services.AddUseCasesDi();
 
 builder.Services.AddHostedService<VehicleStaleMonitorHostedService>();
-builder.Services.AddHostedService<GpsEventConsumerHostedService>();
+builder.Services.AddHostedService<WebApi.Services.GpsEventConsumerHostedService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

@@ -1,4 +1,4 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using App.Interfaces.Ports.Messaging;
 using App.Objects.Gps.DTOs.Output.Response;
 using App.Objects.Gps.Events;
@@ -70,6 +70,7 @@ public sealed class GpsEventConsumerHostedService : BackgroundService
                             await db.StreamAcknowledgeAsync(_streamKey, _consumerGroup, entry.Id);
                             continue;
                         }
+                        Console.WriteLine($"[CONSUMER] got {entry.Id} raw={payload}");
 
                         var evt = JsonSerializer.Deserialize<GpsPositionReceived>(payload.ToString(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                         if (evt is null)
@@ -106,8 +107,8 @@ public sealed class GpsEventConsumerHostedService : BackgroundService
         var gps = scope.ServiceProvider.GetRequiredService<GpsIngestionService>();
 
         // Por ahora, delegamos al servicio existente. 
-        // El gateway seguirá delegando directo hasta refactorizarlo para publicar eventos puros.
-        // Aquí mantenemos compatibilidad: si llega con RawFrame, lo procesamos.
+        // El gateway seguirÃ¡ delegando directo hasta refactorizarlo para publicar eventos puros.
+        // AquÃ­ mantenemos compatibilidad: si llega con RawFrame, lo procesamos.
         if (!string.IsNullOrWhiteSpace(evt.RawFrame))
         {
             var bytes = System.Text.Encoding.ASCII.GetBytes(evt.RawFrame);
@@ -119,3 +120,5 @@ public sealed class GpsEventConsumerHostedService : BackgroundService
         _logger.LogDebug("Evento GPS sin RawFrame recibido. Ignorado por consumidor actual.");
     }
 }
+
+
